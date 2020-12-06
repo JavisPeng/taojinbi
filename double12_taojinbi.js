@@ -31,7 +31,7 @@ function wait(sec) {
 
 //根据正则表达式获取任务
 function get_task(reg_str) {
-    sleep(4000); textMatches('累计任务奖励|今日任务').findOne(2000);
+    sleep(3000); textMatches('累计任务奖励|今日任务').findOne(2000);
     let list_x = text('去完成').find()
     let reg = new RegExp(reg_str)
     for (let i = 0; i < list_x.length; i++) {
@@ -50,10 +50,11 @@ function get_task(reg_str) {
 function do_simple_task(sec) {
     for (let i = 0; i < MAX_EPOCH; i++) {
         let btn_todo = get_task(REG_STRING)
-        console.log('tag ' + btn_todo)
+        //console.log('tag ' + btn_todo)
         if (!btn_todo) break
-        btn_todo.click();wait(sec); back();sleep(1000);
-        click('残忍离开'); click('回到淘宝');click('返回') // 返回 直播待测试
+        btn_todo.click(); wait(sec); back(); sleep(1000);
+        click('残忍离开'); click('回到淘宝'); click('返回') // 返回 直播待测试
+        click('立即领取'); click('去打卡')
         btn_click(text('领取奖励').findOne(2000))
     }
     console.log('简单浏览任务，已经完成');
@@ -138,8 +139,8 @@ function main() {
     fruit_farm_task()
     if (text('今日任务').findOne(500)) {  //下面是淘金币特有的任务
         signin_phonecharge_task()
-        achievement_signin_task()  
-        feed_chick()      
+        achievement_signin_task()
+        feed_chick()
         dice_task()
     }
 }
