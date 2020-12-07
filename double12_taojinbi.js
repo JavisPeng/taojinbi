@@ -27,7 +27,7 @@ function toast_console(msg) {
 //等待sec秒，有完成提示后立即返回
 function wait(sec) {
     while (sec--) {
-        let a1 = textMatches('点我领取奖励|任务已完成快去领奖吧|任务完成|任务已完成').findOne(5)
+        let a1 = textMatches('点我领取奖励|任务已完成快去领奖吧|任务完成|任务已经全部完成啦|全部完成啦').findOne(10)
         let a10 = finished10s()
         let a = descMatches('任务完成|快去领奖吧').findOne(1000)
         if (a1 || a10 || a) {
