@@ -1,3 +1,5 @@
+//console.show() //需要弹出请取消该行注释
+
 //最大执行次数
 var MAX_EPOCH = 101
 
