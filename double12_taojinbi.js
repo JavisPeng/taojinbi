@@ -2,7 +2,7 @@
 var MAX_EPOCH = 101
 
 //一般任务通用的主题关键字匹配
-var REG_STRING = "去逛双|逛高比例|逛猜你喜|逛淘|逛逛大牌|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|天猫国际|逛健康|逛大家|欢乐造12|逛优质|逛苏" //看 |逛好店领
+var REG_STRING = "去逛双|逛高比例|逛猜你喜|逛淘|逛逛大牌|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|天猫国际|逛健康|逛大家|欢乐造12|逛优质|逛苏|看"
 
 //点击控件
 function btn_click(x) { if (x) x.click() }
@@ -19,7 +19,7 @@ function finished10s() {
 //等待sec秒，有完成提示后立即返回
 function wait(sec) {
     while (sec--) {
-        let a1 = textMatches('点我领取奖励|任务已完成快去|任务完成').findOne(5)
+        let a1 = textMatches('点我领取奖励|任务已完成快去领奖吧|任务完成|任务已完成').findOne(5)
         let a10 = finished10s()
         let a = descMatches('任务完成|快去领奖吧').findOne(1000)
         if (a1 || a10 || a) {
@@ -53,15 +53,16 @@ function do_simple_task(sec) {
         console.log('tag ' + btn_todo)
         if (!btn_todo) break
         btn_todo.click(); wait(sec); back(); sleep(1000);
-        click('残忍离开'); click('回到淘宝'); //click('返回') // 返回 直播待测试
-        click('立即领取'); //click('去打卡')
-        btn_click(text('领取奖励').findOne(2000))
+        click('残忍离开'); click('回到淘宝');
+        btn_click(desc('继续退出').findOne(500)) //直播观看
+        click('立即领取'); btn_click(text('领取奖励').findOne(2000))
     }
     console.log('简单浏览任务，已经完成');
 }
 
 //水果农场任务
 function fruit_farm_task() {
+    toast('农场领水果任务')
     console.log('农场领水果任务')
     let btn_todo = text('去施肥').findOne(1000)
     if (!btn_todo) {
@@ -81,12 +82,14 @@ function fruit_farm_task() {
     x = right_window_bounds.left
     y = right_window_bounds.bottom - right_window_bounds.height() / 3
     click(x, y); sleep(3000); back()
-    btn_click(text('领取奖励').findOne(2000))
+    btn_click(text('领取奖励').findOne(1500))
 }
 
 
 //淘宝成就签到
 function achievement_signin_task() {
+    toast('淘宝成就签到任务')
+    console.log('淘宝成就签到任务')
     let btn_todo = get_task('淘宝成就')
     if (!btn_todo) return
     btn_todo.click()
@@ -100,6 +103,8 @@ function achievement_signin_task() {
 
 //签到领话费
 function signin_phonecharge_task() {
+    toast('签到领话费任务')
+    console.log('签到领话费任务')
     let btn_todo = get_task('签到领话费')
     if (!btn_todo) return
     btn_todo.click()
@@ -125,11 +130,26 @@ function dice_task() {
 }
 
 //喂小鸡任务，可以直接返回
-function feed_chick() {
+function feed_chick_task() {
     let btn_todo = get_task('小鸡')
     if (!btn_todo) return
     btn_todo.click()
     btn_click(text('取消').findOne(2000)); sleep(500); back()
+    if (text('打开支付宝').findOne(1000)) back()
+}
+
+//逛好店并领10金币
+function shop_10coin_task() {
+    let btn_todo = get_task('逛好店领')
+    if (!btn_todo) return
+    btn_todo.click()
+    for (let i = 0; i < 10; i++) {
+        let btn_x = desc('逛10秒+10').findOne(1000)
+        if (!btn_x) break
+        btn_x.parent().click()
+        sleep(12000); click('关注+10'); sleep(800); back(); sleep(800);
+    }
+    wait(18); back();
 }
 
 //主函数
@@ -138,11 +158,13 @@ function main() {
     do_simple_task(18)
     fruit_farm_task()
     if (text('今日任务').findOne(500)) {  //下面是淘金币特有的任务
-        feed_chick()
+        feed_chick_task()
         dice_task()
+        shop_10coin_task()
         achievement_signin_task()
         signin_phonecharge_task()
     }
+
 }
 
 main()
