@@ -19,11 +19,11 @@ function finished10s() {
 //等待sec秒，有完成提示后立即返回
 function wait(sec) {
     while (sec--) {
-        let a1 = textMatches('点我领取奖励|任务已.+|任务完成').findOne(5)
+        let a1 = textMatches('点我领取奖励|任务已完成快去|任务完成').findOne(5)
         let a10 = finished10s()
         let a = descMatches('任务完成|快去领奖吧').findOne(1000)
         if (a1 || a10 || a) {
-            console.log('立即返回'); return
+            console.log('立即返回' + a1 + ' ' + ' ' + a10 + ' ' + a); return
         }
     }
     console.log('到时返回');
@@ -54,7 +54,7 @@ function do_simple_task(sec) {
         if (!btn_todo) break
         btn_todo.click(); wait(sec); back(); sleep(1000);
         click('残忍离开'); click('回到淘宝'); //click('返回') // 返回 直播待测试
-        click('立即领取'); click('去打卡')
+        click('立即领取'); //click('去打卡')
         btn_click(text('领取奖励').findOne(2000))
     }
     console.log('简单浏览任务，已经完成');
@@ -138,10 +138,10 @@ function main() {
     do_simple_task(18)
     fruit_farm_task()
     if (text('今日任务').findOne(500)) {  //下面是淘金币特有的任务
-        signin_phonecharge_task()
-        achievement_signin_task()
         feed_chick()
         dice_task()
+        achievement_signin_task()
+        signin_phonecharge_task()
     }
 }
 
