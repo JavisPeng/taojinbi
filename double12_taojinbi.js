@@ -1,4 +1,4 @@
-//console.show() //需要弹出请取消该行注释
+//console.show() //需要弹出控制台消息提示，请取消该行注释
 
 //最大执行次数
 var MAX_EPOCH = 101
@@ -52,7 +52,7 @@ function get_task(reg_str) {
 function do_simple_task(sec) {
     for (let i = 0; i < MAX_EPOCH; i++) {
         let btn_todo = get_task(REG_STRING)
-        console.log('tag ' + btn_todo)
+        //console.log('tag ' + btn_todo)
         if (!btn_todo) break
         btn_todo.click(); wait(sec); back(); sleep(1000);
         click('残忍离开'); click('回到淘宝');
