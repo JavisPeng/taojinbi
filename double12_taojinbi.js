@@ -18,6 +18,12 @@ function finished10s() {
     return x && x.parent().childCount() > 6
 }
 
+//消息提示
+function toast_console(msg) {
+    toast(msg)
+    console.log(msg)
+}
+
 //等待sec秒，有完成提示后立即返回
 function wait(sec) {
     while (sec--) {
@@ -25,10 +31,12 @@ function wait(sec) {
         let a10 = finished10s()
         let a = descMatches('任务完成|快去领奖吧').findOne(1000)
         if (a1 || a10 || a) {
-            console.log('立即返回' + a1 + ' ' + ' ' + a10 + ' ' + a); return
+            //console.log('立即返回' + a1 + ' ' + ' ' + a10 + ' ' + a); 
+            toast_console('立即返回')
+            return
         }
     }
-    console.log('到时返回');
+    toast_console('到时返回');
 }
 
 //根据正则表达式获取任务
@@ -40,8 +48,7 @@ function get_task(reg_str) {
         txt = list_x[i].parent().child(0).child(0).text() //主标题
         //console.log(txt)
         if (reg.test(txt)) {
-            console.log(txt)
-            toast(txt)
+            toast_console(txt)
             return list_x[i]
         }
     }
@@ -64,8 +71,7 @@ function do_simple_task(sec) {
 
 //水果农场任务
 function fruit_farm_task() {
-    toast('农场领水果任务')
-    console.log('农场领水果任务')
+    toast_console('农场领水果任务')
     let btn_todo = text('去施肥').findOne(1000)
     if (!btn_todo) {
         btn_todo = get_task('农场')
@@ -90,8 +96,7 @@ function fruit_farm_task() {
 
 //淘宝成就签到
 function achievement_signin_task() {
-    toast('淘宝成就签到任务')
-    console.log('淘宝成就签到任务')
+    toast_console('淘宝成就签到任务')
     let btn_todo = get_task('淘宝成就')
     if (!btn_todo) return
     btn_todo.click()
@@ -105,8 +110,7 @@ function achievement_signin_task() {
 
 //签到领话费
 function signin_phonecharge_task() {
-    toast('签到领话费任务')
-    console.log('签到领话费任务')
+    toast_console('签到领话费任务')
     let btn_todo = get_task('签到领话费')
     if (!btn_todo) return
     btn_todo.click()
@@ -117,6 +121,7 @@ function signin_phonecharge_task() {
 
 //掷色子任务
 function dice_task() {
+    toast_console('淘宝人生逛街领能量,掷色子任务')
     let btn_todo = get_task('淘宝人生逛街领能量')
     if (!btn_todo) return
     btn_todo.click()
@@ -133,6 +138,7 @@ function dice_task() {
 
 //喂小鸡任务，可以直接返回
 function feed_chick_task() {
+    toast_console('喂小鸡任务')
     let btn_todo = get_task('小鸡')
     if (!btn_todo) return
     btn_todo.click()
@@ -142,6 +148,7 @@ function feed_chick_task() {
 
 //逛好店并领10金币
 function shop_10coin_task() {
+    toast_console('逛好店并领10金币任务')
     let btn_todo = get_task('逛好店领')
     if (!btn_todo) return
     btn_todo.click()
@@ -166,7 +173,7 @@ function main() {
         achievement_signin_task()
         signin_phonecharge_task()
     }
-
+    toast_console('可执行任务已全部完成')
 }
 
 main()
