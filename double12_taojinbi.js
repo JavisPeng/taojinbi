@@ -2,7 +2,7 @@
 var MAX_EPOCH = 101
 
 //一般任务通用的主题关键字匹配
-var REG_STRING = "去逛双|逛高比例|逛猜你喜|逛淘|逛逛大牌|逛好店领|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|天猫国际|逛健康|逛大家|欢乐造12|逛优质|逛苏|看"
+var REG_STRING = "去逛双|逛高比例|逛猜你喜|逛淘|逛逛大牌|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|天猫国际|逛健康|逛大家|欢乐造12|逛优质|逛苏" //看 |逛好店领
 
 //点击控件
 function btn_click(x) { if (x) x.click() }
@@ -31,7 +31,7 @@ function wait(sec) {
 
 //根据正则表达式获取任务
 function get_task(reg_str) {
-    sleep(3000); textMatches('累计任务奖励|今日任务').findOne(2000);
+    sleep(1000); textMatches('累计任务奖励|今日任务').findOne(3000);
     let list_x = text('去完成').find()
     let reg = new RegExp(reg_str)
     for (let i = 0; i < list_x.length; i++) {
@@ -50,10 +50,10 @@ function get_task(reg_str) {
 function do_simple_task(sec) {
     for (let i = 0; i < MAX_EPOCH; i++) {
         let btn_todo = get_task(REG_STRING)
-        //console.log('tag ' + btn_todo)
+        console.log('tag ' + btn_todo)
         if (!btn_todo) break
         btn_todo.click(); wait(sec); back(); sleep(1000);
-        click('残忍离开'); click('回到淘宝'); click('返回') // 返回 直播待测试
+        click('残忍离开'); click('回到淘宝'); //click('返回') // 返回 直播待测试
         click('立即领取'); click('去打卡')
         btn_click(text('领取奖励').findOne(2000))
     }
@@ -129,7 +129,7 @@ function feed_chick() {
     let btn_todo = get_task('小鸡')
     if (!btn_todo) return
     btn_todo.click()
-    btn_click(text('取消').findOne(2000)); sleep(2000); back()
+    btn_click(text('取消').findOne(2000)); sleep(500); back()
 }
 
 //主函数
