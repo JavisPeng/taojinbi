@@ -12,7 +12,9 @@
  
 
 # 使用说明
+
  下载 [autojs4.1.1](https://share.weiyun.com/owu3tBNr)，并开启无障碍服务，导入上面脚本并运行
+ 
 ![运行图)](https://img-blog.csdnimg.cn/20201208150156786.jpg)
 
  - 选中开启终端消息提示：会有一个小窗输出运行任务消息提示 
