@@ -4,7 +4,7 @@
 **后续代码持续更新，力争完成淘金币全任务**
 
 # 测试环境
-华为P30Pro + autojs4.1.1 + [淘宝v9.0](https://www.wandoujia.com/apps/32267/history)
+华为P30Pro + [autojs4.1.1](https://share.weiyun.com/owu3tBNr) + [淘宝v9.0](https://www.wandoujia.com/apps/32267/history)
 
 # 脚本功能列表
  - 自动执行淘金币所有浏览任务(**包含掷色子任务、芭芭农场任务、淘宝成就签到任务、签到领话费任务等**)
