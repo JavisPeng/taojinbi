@@ -48,7 +48,6 @@ function wait(sec, mid_back) {
         let a = descMatches('任务完成|快去领奖吧').findOne(1000)
         if (mid_back && sec == 14) back
         if (a1 || a10 || a) {
-            //console.log('立即返回' + a1 + ' ' + ' ' + a10 + ' ' + a); 
             toast_console('到时立即返回')
             return
         }
@@ -63,16 +62,18 @@ function finished10s() {
 }
 
 //根据正则表达式获取任务
-function get_task(reg_str) {
+function get_task(reg_str, not_reg_str) {
     sleep(1000); textMatches('累计任务奖励|每日来访领能量.+').findOne(3000)
-    let list_x = textMatches('去完成|去施肥').find()
+    let list_x = textMatches('去完成|去施肥|去领取').find()
     let reg = new RegExp(reg_str)
+    let not_reg = not_reg_str == undefined ? new RegExp('z') : new RegExp(not_reg_str)
+
     for (let i = 0; i < list_x.length; i++) {
-        let btn_x = list_x[i]
-        txt = btn_x.parent().child(0).child(0).text() //主标题
-        if (reg.test(txt) && !/消消乐/.test(txt)) {
+        txt = list_x[i].parent().child(0).child(0).text() //主标题
+        if (reg.test(txt) && !not_reg.test(txt)) {
             toast_console(txt)
-            return btn_x
+            let obj = new Object(); obj.x = list_x[i]
+            return obj
         }
     }
     return null
@@ -80,42 +81,58 @@ function get_task(reg_str) {
 
 //淘金币获取奖励
 function get_rewards() {
-    btn_click(text('领取奖励').findOne(1500)); sleep(2500) //等待调整布局
+    btn_click(text('领取奖励').findOne(1500)); sleep(1500) //等待调整布局
 }
 
 //执行简单的浏览任务
-function do_simple_task(sec, reg_str) {
+function do_simple_task(epoch, sec, reg_str) {
+    let not_reg_str = '农场|消消乐' //需要特殊执行的任务
     for (let i = 0; i < MAX_EPOCH; i++) {
-        let btn_todo = get_task(reg_str)
-        //console.log('** ', btn_todo)
-        if (!btn_todo) break
-        btn_todo.click(); wait(sec); back(); sleep(1000);
+        let obj = get_task(reg_str, not_reg_str)
+        if (!obj) {
+            console.log('obj为空,无可执行任务'); break
+        }
+        if (!obj.x) {
+            console.log('obj.x为空,重新执行'); continue
+        }
+        obj.x.click(); wait(sec); back(); sleep(1000);
         click('残忍离开'); click('回到淘宝');
-        btn_click(desc('继续退出').findOne(1000)) //直播观看
         click('立即领取'); get_rewards()
     }
 }
 
+/**
+ * 确保任务按钮被单击，解决单击时布局发生改变的问题
+ * @param {*} name  任务主题关键字
+ */
+function assure_click_task(name) {
+    let obj = null
+    for (let i = 0; i < 3; i++) {
+        obj = get_task(name)
+        if (!obj) return false
+        if (obj.x) break
+    }
+    if (!obj.x) {
+        toast_console('无法找到[' + name + '任务],请确保其在未完成任务列表中'); return false
+    }
+    obj.x.click();
+    return true
+}
+
+
 //双12心愿卡任务
 function wishcard_task() {
-    btn_todo = get_task('心愿卡')
-    if (!btn_todo) {
-        toast_console('无法找到[心愿卡任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click();
+    if (!assure_click_task('心愿卡')) return
     sleep(6000);
     cs_click(8, '#fff89d', 0.2, 0.8, 0.45, 0.15);
-    sleep(4500); back()
-    cs_click(3, '#ff7d44', 0, 0.5, 0.45, 0.2)
+    sleep(4500); back(); sleep(2000)
+    cs_click(6, '#ff7d44', 0.2, 0.5, 0.45, 0.2)
 }
 
 //======================芭芭农场任务======================
 function baba_farm_task() {
-    btn_todo = get_task('农场')
-    if (!btn_todo) {
-        toast_console('无法找到[芭芭农场任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click(); sleep(8000)
+    if (!assure_click_task('农场')) return
+    sleep(8000)
     //金色获取肥料按钮
     cs_click(6, '#fed362', 0.5, 0.45, 0.45, 0.25)
     sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000))
@@ -127,11 +144,7 @@ function baba_farm_task() {
 
 //淘宝成就签到
 function achievement_signin_task() {
-    let btn_todo = get_task('淘宝成就')
-    if (!btn_todo) {
-        toast_console('无法找到[淘宝成就签到任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click()
+    if (!assure_click_task('淘宝成就')) return
     btn_click(text("成就礼包").findOne(3000))
     btn_click(text("我收下了").findOne(1000))
     text('成就签到').findOne(2000).parent().child(3).click()
@@ -139,34 +152,23 @@ function achievement_signin_task() {
     sleep(1000); back(); get_rewards()
 }
 
-//签到领话费
+//签到领话费充值金
 function signin_phonecharge_task() {
-    let btn_todo = get_task('签到领话费')
-    if (!btn_todo) {
-        toast_console('无法找到[签到领话费任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click()
+    if (!assure_click_task('签到领话费充值金')) return
     btn_click(text('立即领取').findOne(9000))
     sleep(11000); back(); get_rewards()
 }
 
 //逛直播间任务
 function live_room_task() {
-    let btn_todo = get_task('直播间')
-    if (!btn_todo) {
-        toast_console('无法找到[逛直播间任务],请确保其在未完成任务列表中'); return
-    }
-    //退出会有恶心的提示
-    btn_todo.click(); wait(18, true); back(); get_rewards()
+    if (!assure_click_task('直播间')) return
+    //退出会有恶心的提示  关键字'观看'
+    btn_todo.x.click(); wait(18, true); back(); get_rewards()
 }
 
 //喂小鸡任务，可以直接返回
 function feed_chick_task() {
-    let btn_todo = get_task('小鸡')
-    if (!btn_todo) {
-        toast_console('无法找到[喂小鸡任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click()
+    if (!assure_click_task('小鸡')) return
     btn_click(text('取消').findOne(2000)); sleep(500); back()
     if (text('打开支付宝').findOne(1000)) back()
     get_rewards();
@@ -174,11 +176,7 @@ function feed_chick_task() {
 
 //逛好店并领10金币
 function shop_10coin_task() {
-    let btn_todo = get_task('逛好店领')
-    if (!btn_todo) {
-        toast_console('无法找到[逛好店并领10金币任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click()
+    if (!assure_click_task('逛好店领')) return
     for (let i = 0; i < 10; i++) {
         let btn_x = desc('逛10秒+10').findOne(1000)
         if (!btn_x) break
@@ -188,73 +186,86 @@ function shop_10coin_task() {
     wait(18); back(); get_rewards()
 }
 
+//去天猫红包任务
+function tianmao_task() {
+    if (!assure_click_task('去天猫APP领红包')) return
+    sleep(6000)
+    let btn_x = text('继续逛逛').findOne(8000)
+    if (btn_x) btn_x.parent().click()
+    wait(18)
+    for (let i = 0; i < 8; i++) {
+        if (!text('今日任务').findOne(500)) back()
+    }
+    get_rewards()
+}
+
 //======================掷骰子任务======================
 function dice_task() {
-    let btn_todo = get_task('淘宝人生逛街领能量')
-    if (!btn_todo) {
-        toast_console('无法找到[掷骰子任务],请确保其在未完成任务列表中'); return
-    }
-    btn_todo.click()
-    sleep(6000)
-    //金色前进按钮
-    cs_click(6, '#fff89d', 0, 0.6, 0.45, 0.2); sleep(3000)
+    if (!assure_click_task('淘宝人生逛街领能量')) return
+    sleep(5000)
     //橙色收下奖励按钮按钮
-    cs_click(3, '#ff7d44', 0.15, 0.55, 0.45, 0.2); back(); sleep(1000)
+    cs_click(3, '#ff7d44', 0.2, 0.45, 0.45, 0.2);
+    //金色前进按钮
+    cs_click(8, '#fff89d', 0, 0.6, 0.45, 0.2); sleep(3000)
+    //橙色收下奖励按钮按钮
+    cs_click(3, '#ff7d44', 0.15, 0.5, 0.45, 0.2); back(); sleep(1000)
     //橙色返回淘宝按钮
-    cs_click(3, '#ff7d44', 0, 0.5, 0.45, 0.2)
+    cs_click(3, '#ff7d44', 0.15, 0.5, 0.45, 0.2)
     get_rewards()
 }
 
 
 function double12_task() {
-    app.launch('com.taobao.taobao')
-    if (!textMatches('领欢乐币|累计任务奖励').findOne(500)) {
+    if (!textMatches('领欢乐币|累计任务奖励').findOne(1000)) {
+        app.launch('com.taobao.taobao');
         while (!desc('我的淘宝').findOne(1000)) back();
         btn_click(desc('我的淘宝').findOne(1000));
-        btn_position_click(desc('赢1212元红包').findOne(1000)); sleep(2000)
+        console.log("btn_click(desc('我的淘宝').findOne(1000));");
+        btn_click(desc('赢1212元红包').findOne(1500))
+        btn_click(textContains('签到领取3').findOne(2000))
+        btn_click(textContains('我知道').findOne(1000))
         btn_click(text('领欢乐币').findOne(3000))
     }
+    btn_click(text('领欢乐币').findOne(800))
     btn_click(text('去打卡').findOne(1000))
     let doublle12_reg_str = "逛双|逛淘|逛优|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|逛双|看"
-    do_simple_task(18, doublle12_reg_str)
+    do_simple_task(MAX_EPOCH, 18, doublle12_reg_str)
     baba_farm_task()
     wishcard_task()
-    toast_console('****双12任务执行完毕')
+    //do_simple_task(10, 18, doublle12_reg_str)
+    toast_console('****双12任务执行完毕****')
 }
 
 function taojinbi_task() {
-    app.launch('com.taobao.taobao')
-    if (!text('今日任务').findOne(500)) {
+    if (!text('今日任务').findOne(1500)) {
+        app.launch('com.taobao.taobao')
         while (!desc('我的淘宝').findOne(1000)) back();
         sleep(800); btn_click(desc('我的淘宝').findOne(1000));
         btn_position_click(text('淘金币').findOne(1000))
         btn_click(text('签到领金币').findOne(3000))
         btn_click(text('领取奖励').findOne(1000))
-        var btn_x = text('赚金币').findOne(1000)
+        var btn_x = text('赚金币').findOne(2000)
         if (!btn_x) {
-            back(); btn_position_click(text('淘金币').findOne(1000))
-            btn_x = text('赚金币').findOne(3000)
-            if (!btn_x) {
-                toast_console('赚金币按钮点击失败，请重新运行淘金币任务'); return
-            }
+            toast_console('赚金币按钮点击失败，请重新运行淘金币任务'); return
         }
         btn_x.click()
     }
-    let taojinbi_reg_str = "逛淘|欢乐|浏览|逛高|聚划算|天猫国际|逛逛|逛健康|小说|逛优"
+    let taojinbi_reg_str = "逛|欢乐|浏览|聚划算|天猫国际|看"
     textMatches('每日来访领能量.+').findOne(6000)
-    do_simple_task(18, taojinbi_reg_str)
+    do_simple_task(MAX_EPOCH, 18, taojinbi_reg_str)
     baba_farm_task()
     feed_chick_task()
     dice_task()
     shop_10coin_task()
     achievement_signin_task()
     signin_phonecharge_task()
+    tianmao_task()
     toast_console('*****淘金任务执行完毕')
 }
 
 //主函数
 function main() {
-    requestScreenCapture();    //截图权限请求
+    requestScreenCapture(false);
     let options = dialogs.multiChoice("请选择需要执行的任务", ['开启终端消息提示', '双12任务', '淘金币任务'])
     options.forEach(option => {
         switch (option) {
