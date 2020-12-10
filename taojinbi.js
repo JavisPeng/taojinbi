@@ -85,13 +85,13 @@ function get_task(reg_str, not_reg_str) {
 //淘金币获取奖励
 function get_rewards() {
     if (!is_double12_task) {
-        sleep(100); btn_click(text('领取奖励').findOne(1000)); sleep(1500) //等待调整布局
+        sleep(500); btn_click(text('领取奖励').findOne(2000)); sleep(1500) //等待调整布局
     }
 }
 
 //执行简单的浏览任务
 function do_simple_task(epoch, sec, reg_str) {
-    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领' //需要特殊执行的任务
+    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡' //需要特殊执行的任务
     for (let i = 0; i < MAX_EPOCH; i++) {
         let obj = get_task(reg_str, not_reg_str)
         if (!obj) {
@@ -142,7 +142,7 @@ function baba_farm_task() {
     sleep(8000)
     //金色获取肥料按钮
     cs_click(6, '#fed362', 0.5, 0.45, 0.45, 0.25)
-    sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000))
+    sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000));sleep(500)
     let btn_col = text('TB1ZbskIEH1gK0jSZSyXXXtlpXa-108-120.png_560x370Q50s50.jpg_').findOne(1000)
     if (btn_col) {
         btn_col.click(); sleep(1000)
@@ -269,8 +269,8 @@ function dice_task() {
 
 
 function double12_task() {
-    app.launch('com.taobao.taobao'); sleep(1000)
     if (!textMatches('领欢乐币|累计任务奖励').findOne(1000)) {
+        app.launch('com.taobao.taobao');
         while (!desc('我的淘宝').findOne(1000)) back();
         btn_click(desc('我的淘宝').findOne(1000));
         btn_click(desc('赢1212元红包').findOne(1500))
@@ -284,17 +284,16 @@ function double12_task() {
     do_simple_task(MAX_EPOCH, 18, doublle12_reg_str)
     baba_farm_task()
     wishcard_task()
-    //do_simple_task(10, 18, doublle12_reg_str)
     toast_console('****双12任务执行完毕****')
 }
 
 function taojinbi_task() {
-    app.launch('com.taobao.taobao'); sleep(1000)
     if (!text('今日任务').findOne(1500)) {
+        app.launch('com.taobao.taobao');
         while (!desc('我的淘宝').findOne(1000)) back();
         sleep(800); btn_click(desc('我的淘宝').findOne(1000));
         btn_position_click(text('淘金币').findOne(1000))
-        btn_click(text('签到领金币').findOne(3000))
+        btn_click(text('签到领金币').findOne(2000))
         btn_click(text('领取奖励').findOne(1000))
         var btn_x = text('赚金币').findOne(2000)
         if (!btn_x) {
