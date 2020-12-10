@@ -1,7 +1,7 @@
 # taobao_taojinbi
 本项目主要用于自动执行淘金币活动，但也兼容双12活动
 
-**后续代码持续更新，力争完成淘金币全任务**
+**后续代码持续更新，力争完成淘金币全任务，你的☆就是我的动力**
 
 # 测试环境
 华为P30Pro + [autojs4.1.1](https://share.weiyun.com/owu3tBNr) + [淘宝v9.16.0](https://www.wandoujia.com/apps/32267/history)
