@@ -32,10 +32,11 @@ function cs_click(num, rgb, xr, yr, wr, hr) {
         let point = findColor(img, rgb, { region: [img.getWidth() * xr, img.getHeight() * yr, img.getWidth() * wr, img.getHeight() * hr], threshold: 8 })
         if (point) {
             //console.log(point);
-            click(point.x, point.y); break
+            click(point.x, point.y); return true
         }
         sleep(1000)
     }
+    return false
 }
 
 //===================业务逻辑函数=========================
@@ -139,13 +140,13 @@ function wishcard_task() {
 //芭芭农场任务
 function baba_farm_task() {
     if (!assure_click_task('农场')) return
-    sleep(8000)
+    sleep(6000)
     //金色获取肥料按钮
     cs_click(6, '#fed362', 0.5, 0.45, 0.45, 0.25)
-    sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000));sleep(500)
-    let btn_col = text('TB1ZbskIEH1gK0jSZSyXXXtlpXa-108-120.png_560x370Q50s50.jpg_').findOne(1000)
-    if (btn_col) {
-        btn_col.click(); sleep(1000)
+    sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000)); sleep(500)
+    //签到列表领肥料
+    if (cs_click(3, '#9dbe77', 0.66, 0.66, 0.25, 0.25)) {
+        sleep(1000)
         btn_click(text('去签到').findOne(1000))
         btn_click(text('去领取').findOne(1000))
         btn_click(text('关闭').findOne(1000)); sleep(1000)
@@ -308,8 +309,8 @@ function taojinbi_task() {
     feed_chick_task()
     dice_task()
     shop_10coin_task()
-    achievement_signin_task()
     signin_phonecharge_task()
+    achievement_signin_task()
     tianmao_task()
     toast_console('*****淘金任务执行完毕*****')
 }
