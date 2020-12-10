@@ -1,8 +1,8 @@
-//最大执行次数
-var MAX_EPOCH = 101
 
-//是否为双12任务,12后需调整淘金币代码
-var is_double12_task = false
+//===================用户可编辑参数===================
+var MAX_EPOCH = 101 //最大执行次数
+var is_earn_10coin = true //是否在逛好店任务中也执行领10金币任务(10s+10金币)
+var is_collect_shop = true //是否在10金币任务中关注商铺(关注商铺+10金币)
 
 //===================通用函数=========================
 //点击控件
@@ -84,12 +84,14 @@ function get_task(reg_str, not_reg_str) {
 
 //淘金币获取奖励
 function get_rewards() {
-    sleep(1000); btn_click(text('领取奖励').findOne(1000)); sleep(1500) //等待调整布局
+    if (!is_double12_task) {
+        sleep(100); btn_click(text('领取奖励').findOne(1000)); sleep(1500) //等待调整布局
+    }
 }
 
 //执行简单的浏览任务
 function do_simple_task(epoch, sec, reg_str) {
-    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量' //需要特殊执行的任务
+    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领' //需要特殊执行的任务
     for (let i = 0; i < MAX_EPOCH; i++) {
         let obj = get_task(reg_str, not_reg_str)
         if (!obj) {
@@ -150,7 +152,7 @@ function baba_farm_task() {
     }
     //金色施肥按钮
     cs_click(3, '#fff39f', 0.45, 0.6, 0.25, 0.35)
-    sleep(500); back()
+    sleep(500); back(); get_rewards()
 }
 
 
@@ -192,11 +194,14 @@ function feed_chick_task() {
 //逛好店并领10金币
 function shop_10coin_task() {
     if (!assure_click_task('逛好店领')) return
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10 && is_earn_10coin; i++) {
         let btn_x = desc('逛10秒+10').findOne(1000)
         if (!btn_x) break
-        btn_x.parent().click()
-        sleep(12000); click('关注+10'); sleep(800); back(); sleep(800);
+        btn_x.parent().click(); sleep(12000);
+        if (is_collect_shop) {
+            click('关注+10'); sleep(800);
+        }
+        back(); sleep(800);
     }
     wait(18); back(); get_rewards()
 }
@@ -231,6 +236,7 @@ function xiaoxiaole_task() {
     cs_click(6, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(3000);
     //返回淘宝按钮
     back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2)
+    get_rewards()
 }
 
 //去天猫红包任务
@@ -309,6 +315,8 @@ function taojinbi_task() {
     toast_console('*****淘金任务执行完毕*****')
 }
 
+var is_double12_task = false //是否为双12任务,12后需调整淘金币代码
+
 //主函数
 function main() {
     requestScreenCapture(false);
@@ -318,9 +326,9 @@ function main() {
             case 0:
                 console.show(); break;
             case 1:
-                double12_task(); is_double12_task = true; break;
+                is_double12_task = true; double12_task(); break;
             case 2:
-                taojinbi_task(); break;
+                is_double12_task = false; taojinbi_task(); break;
         }
     });
 }
