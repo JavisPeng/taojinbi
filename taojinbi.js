@@ -91,7 +91,7 @@ function get_rewards() {
 
 //执行简单的浏览任务
 function do_simple_task(epoch, sec, reg_str) {
-    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡' //需要特殊执行的任务
+    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡|直播间' //需要特殊执行的任务
     for (let i = 0; i < MAX_EPOCH; i++) {
         let obj = get_task(reg_str, not_reg_str)
         if (!obj) {
