@@ -25,13 +25,18 @@ function toast_console(msg) {
  * @param {*} yr y坐标相对图片高的比例
  * @param {*} wr 区域宽相对图片宽的比例
  * @param {*} hr 区域高相对图片高的比例
+ * @param {*} hr 是否上下翻转
  */
-function cs_click(num, rgb, xr, yr, wr, hr, threshold) {
-    threshold = threshold == undefined ? 8 : threshold
+function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
+    //threshold = threshold == undefined ? 8 : threshold
     while (num--) {
         let img = captureScreen()
-        let point = findColor(img, rgb, { region: [img.getWidth() * xr, img.getHeight() * yr, img.getWidth() * wr, img.getHeight() * hr], threshold: threshold })
+        if (flipup != undefined) img = images.rotate(img, 180)
+        let point = findColor(img, rgb, { region: [img.getWidth() * xr, img.getHeight() * yr, img.getWidth() * wr, img.getHeight() * hr], threshold: 8 })
         if (point) {
+            if (flipup != undefined) {
+                point.x = img.getWidth() - point.x; point.y = img.getHeight() - point.y
+            }
             //console.log(point);
             click(point.x, point.y); return true
         }
@@ -87,27 +92,8 @@ function get_task(reg_str, not_reg_str) {
 //淘金币获取奖励
 function get_rewards() {
     if (!is_double12_task) {
-        sleep(500); btn_click(text('领取奖励').findOne(2000)); sleep(1500) //等待调整布局
-    }
-}
-
-//执行简单的浏览任务
-function do_simple_task(epoch, sec, reg_str) {
-    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡|直播间|淘宝成就' //需要特殊执行的任务
-    for (let i = 0; i < MAX_EPOCH; i++) {
-        let obj = get_task(reg_str, not_reg_str)
-        if (!obj) {
-            console.log('obj为空,无可执行任务'); break
-        }
-        if (!obj.x) {
-            console.log('obj.x为空,重新执行'); continue
-        }
-        obj.x.click()
-        if (wait(sec)) {
-            back(); sleep(1000);
-            click('残忍离开'); click('回到淘宝');
-            click('立即领取'); get_rewards()
-        }
+        sleep(500); btn_click(text('领取奖励').findOne(2000));
+        btn_click(text('领取奖励').findOne(1000)); sleep(1000) //等待调整布局
     }
 }
 
@@ -127,7 +113,6 @@ function assure_click_task(name) {
     }
     obj.x.click(); return true
 }
-
 
 //双12心愿卡任务
 function wishcard_task() {
@@ -163,7 +148,10 @@ function achievement_signin_task() {
     if (!assure_click_task('淘宝成就')) return
     btn_click(text("成就礼包").findOne(3000))
     btn_click(text("我收下了").findOne(1000))
-    text('成就签到').findOne(2000).parent().child(3).click()
+    let btn_x = text('成就签到').findOne(2000)
+    if (btn_x) {
+        btn_x.parent().child(3).click()
+    }
     btn_click(text("我收下了").findOne(1000))
     sleep(1000); back(); get_rewards()
 }
@@ -178,6 +166,7 @@ function signin_phonecharge_task() {
 //逛直播间任务
 function live_room_task() {
     if (!assure_click_task('直播间')) return
+    btn_todo.click()
     //退出会有恶心的提示 
     btn_todo.x.click(); wait(18); back(); sleep(1000)
     btn_position_click(desc('继续推出').findOne(1000))
@@ -212,20 +201,22 @@ function shop_10coin_task() {
 //消消乐任务
 function xiaoxiaole_task() {
     if (!assure_click_task('消消')) return
-    sleep(8000); console.hide()
+    sleep(8000);
+    console.log('等待进入消消乐界面');
     //开心收下奖励
-    cs_click(2, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
-    //返回
-    sleep(2000); back(); sleep(1500)
+    cs_click(5, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
+    //第一次放回没有主页按钮
+    back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
+    back(); sleep(1000)
     //回到主页
-    console.log('回到主页');
-    cs_click(12, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(2500)
+    console.log('消消乐回到主页');
+    cs_click(6, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(2500)
     //close
     cs_click(3, '#f5fefb', 0.6, 0.2, 0.3, 0.3); sleep(1000)
     //滑到屏幕下方
     for (let i = 0; i < 4; i++)swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 300)
     //点击第一关 绿色圆圈
-    sleep(1000); cs_click(3, '#63cbc4', 0.2, 0.5, 0.5, 0.2); sleep(3000)
+    sleep(1000); cs_click(3, '#63cbc4', 0.5, 0.3, 0.4, 0.4, true); sleep(2000)
     console.log('点击第一关');
     //开始方块 绿色方块
     cs_click(3, '#11c6bf', 0.3, 0.5, 0.3, 0.3); sleep(5000)
@@ -235,20 +226,21 @@ function xiaoxiaole_task() {
     let point1 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.2, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
     img = images.rotate(img, 180)
     let point2 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.2, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
-    console.log(point1, img.getWidth() - point2.x, img.getHeight() - point2.y);
-    let box_x = (img.getWidth() - point2.x - point1.x) / 5
-    let box_y = (img.getHeight() - point2.y - point1.y) / 6
-    list_xy = [[0, 1, 0, 2], [0, 5, 0, 4], [2, 2, 3, 2]]
-    list_xy.forEach(xy => {
-        x1 = (xy[0] + 0.5) * box_x + point1.x; x2 = (xy[2] + 0.5) * box_x + point1.x
-        y1 = (xy[1] + 0.5) * box_y + point1.y; y2 = (xy[3] + 0.5) * box_y + point1.y
-        swipe(x1, y1, x2, y2, 800); sleep(1200)
-    });
-    //返回2次 双12任务导致?
-    //back(); sleep(1000); cs_click(2, '#ffffff', 0.6, 0.2, 0.3, 0.2); sleep(500); //单击关闭图标
+    if (point1 && point2) {
+        let box_x = (img.getWidth() - point2.x - point1.x) / 5
+        let box_y = (img.getHeight() - point2.y - point1.y) / 6
+        list_xy = [[0, 1, 0, 2], [0, 5, 0, 4], [2, 2, 3, 2]]
+        list_xy.forEach(xy => {
+            x1 = (xy[0] + 0.5) * box_x + point1.x; x2 = (xy[2] + 0.5) * box_x + point1.x
+            y1 = (xy[1] + 0.5) * box_y + point1.y; y2 = (xy[3] + 0.5) * box_y + point1.y
+            swipe(x1, y1, x2, y2, 800); sleep(1200)
+        });
+    }
     back(); sleep(1000);
-    //回到主页
-    cs_click(6, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(3000);
+    //回到主页1 灰色的暂时离开
+    cs_click(3, '#9d6031', 0.2, 0.2, 0.4, 0.5, true)
+    //回到主页2 金色的回到主页
+    cs_click(3, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(3000);
     //返回淘宝按钮
     back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2)
     get_rewards()
@@ -283,22 +275,44 @@ function dice_task() {
     get_rewards()
 }
 
+//执行简单的浏览任务
+function do_simple_task(epoch, sec, reg_str) {
+    let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡|直播间|淘宝成就' //需要特殊执行的任务
+    for (let i = 0; i < MAX_EPOCH; i++) {
+        let obj = get_task(reg_str, not_reg_str)
+        if (!obj) {
+            console.log('obj为空,无可执行的简单浏览任务'); break
+        }
+        if (!obj.x) {
+            console.log('obj.x为空,重新执行简单浏览任务'); continue
+        }
+        obj.x.click()
+        if (wait(sec)) {
+            back(); sleep(1000);
+            click('残忍离开'); click('回到淘宝');
+            click('立即领取'); get_rewards()
+        }
+    }
+}
+
 function double12_task() {
     if (!textMatches('领欢乐币|累计任务奖励').findOne(1000)) {
         app.launch('com.taobao.taobao');
         while (!desc('我的淘宝').findOne(1000)) back();
         btn_click(desc('我的淘宝').findOne(1000));
-        btn_click(desc('赢1212元红包').findOne(1500))
-        btn_click(textContains('签到领取').findOne(2000))
+        btn_click(desc('赢1212元红包').findOne(1500)); sleep(800)
+        btn_position_click(textMatches('签到领取.+个奖券').findOne(2000))
         btn_click(textContains('我知道').findOne(1000))
         btn_click(text('领欢乐币').findOne(3000))
     }
     btn_click(text('领欢乐币').findOne(800))
-    btn_click(text('去打卡').findOne(1500))
-    let doublle12_reg_str = "逛双|逛淘|逛优|逛聚划算|逛一逛|搜一搜|浏览|来拍卖|逛双|看"
+    sleep(100); btn_click(text('去打卡').findOne(1500))
+    let doublle12_reg_str = "逛双|逛淘|逛优|逛聚划算|搜一搜|浏览|来拍卖|逛双|看|逛一逛"
     do_simple_task(MAX_EPOCH, 18, doublle12_reg_str)
     baba_farm_task()
     wishcard_task()
+    //xiaoxiaole_task()
+    do_simple_task(32, 18, doublle12_reg_str)
     toast_console('****双12任务执行完毕****')
 }
 
@@ -319,6 +333,7 @@ function taojinbi_task() {
     let taojinbi_reg_str = "逛|欢乐|浏览|聚划算|天猫国际|看"
     textMatches('每日来访领能量.+').findOne(6000)
     do_simple_task(MAX_EPOCH, 18, taojinbi_reg_str)
+    live_room_task()
     baba_farm_task()
     feed_chick_task()
     dice_task()
@@ -326,6 +341,8 @@ function taojinbi_task() {
     signin_phonecharge_task()
     achievement_signin_task()
     tianmao_task()
+    //xiaoxiaole_task()
+    do_simple_task(32, 18, taojinbi_reg_str)
     toast_console('*****淘金任务执行完毕*****')
 }
 
