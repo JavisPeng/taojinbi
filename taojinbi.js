@@ -166,9 +166,8 @@ function signin_phonecharge_task() {
 //逛直播间任务
 function live_room_task() {
     if (!assure_click_task('直播间')) return
-    btn_todo.click()
     //退出会有恶心的提示 
-    btn_todo.x.click(); wait(18); back(); sleep(1000)
+    wait(18); back(); sleep(1000)
     btn_position_click(desc('继续推出').findOne(1000))
     let num = 5;
     while (textMatches('观看').findOne(1000) && num--) { back(); sleep(1000) }
