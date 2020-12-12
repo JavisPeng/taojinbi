@@ -285,7 +285,7 @@ function double12_task() {
         while (!desc('我的淘宝').findOne(1000)) back();
         btn_click(desc('我的淘宝').findOne(1000));
         btn_click(desc('赢1212元红包').findOne(1500)); sleep(800)
-        btn_position_click(textMatches('签到领取.+个奖券').findOne(2000))
+        btn_click(textMatches('签到领取.+个奖券').findOne(2500))
         btn_click(textContains('我知道').findOne(1000))
         btn_click(text('领欢乐币').findOne(3000))
     }
