@@ -49,6 +49,8 @@
  
 ![运行图](https://github.com/JavisPeng/taojinbi/blob/main/demo.gif)
 
+视频运行实例:https://www.bilibili.com/video/BV1Cy4y1S7qE
+
 **请勿使用模拟器运行，实测只奖励100金币**
 
 # 免责声明
