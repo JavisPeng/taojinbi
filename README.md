@@ -24,6 +24,9 @@
  
 ![运行图git](https://img-blog.csdnimg.cn/20201213115841614.gif)
 
+![运行图](https://github.com/JavisPeng/taojinbi/blob/main/demo.gif)
+
+
 **请勿使用模拟器运行，实测只奖励100金币**
  
 
