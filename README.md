@@ -22,8 +22,6 @@
 
 下载 [autojs4.1.1](https://share.weiyun.com/owu3tBNr)，并开启无障碍服务，导入上面脚本并运行
  
-![运行图git](https://img-blog.csdnimg.cn/20201213115841614.gif)
-
 ![运行图](https://github.com/JavisPeng/taojinbi/blob/main/demo.gif)
 
 
