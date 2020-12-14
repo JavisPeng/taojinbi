@@ -1,3 +1,5 @@
+auto.waitFor() //等待开启无障碍服务
+
 //===================用户可编辑参数===================
 var MAX_EPOCH = 101 //最大执行次数
 var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
@@ -7,7 +9,7 @@ var do_xiaoxiaole_task = 1 // 1表示自动执行[消消乐任务]，0表示跳�
 var taojinbi_reg_str = "逛|欢乐|浏览|聚划算|天猫国际|看" //任务主题关键字，若有新的浏览任务出现可在此添加
 var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
 var is_collect_shop = 0 //是否在10金币任务中关注商铺(关注商铺+10金币)  默认不执行 0
-var is_show_choice = 1 //是否显示特殊截图任务的选择框(生成app时使用) 默认显示
+var is_show_choice = 1 //是否在启动时,显示特殊截图任务的选择框(生成app时使用) 默认显示
 
 //===================通用函数=========================
 //点击控件
@@ -210,16 +212,19 @@ function dice_task() {
 //消消乐任务
 function xiaoxiaole_task() {
     if (!assure_click_task('消消')) return
+    //textContains('消消').findOne(500).click()
     sleep(6000);
-    console.log('消消乐,等待进入游戏界面'); console.hide()
+    console.log('消消乐,等待进入游戏界面'); //console.hide()
     //开心收下奖励
-    cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
-    //第一次返回没有主页按钮?
-    //back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
-    back(); sleep(1000)
+    cs_click(4, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
+    //第一次返回没有主页按钮?//back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
     //回到主页
     console.log('消消乐,回到游戏首页');
-    cs_click(3, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(1500)
+    for (let i = 0; i < 8; i++) {
+        back(); sleep(1000)
+        if (cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break
+    }
+    sleep(1500) //过渡动画
     //邮件领取
     if (cs_click(3, '#11c6bf', 0.4, 0.6, 0.3, 0.3)) {
         cs_click(2, '#ffffff', 0.7, 0.1, 0.3, 0.4);
@@ -254,12 +259,13 @@ function xiaoxiaole_task() {
     //回到主页2 金色的回到主页
     cs_click(3, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(3000);
     //返回淘宝按钮
-    back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); console.show()
+    back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); //console.show()
     get_rewards()
 }
 
 //执行简单的浏览任务
 function do_simple_task(epoch, sec, reg_str) {
+    toast_console('查询可执行的简单浏览任务')
     let not_reg_str = '农场|消消乐|淘宝人生逛街领能量|逛好店领|小鸡|直播间|淘宝成就' //需要特殊执行的任务
     for (let i = 0; i < MAX_EPOCH; i++) {
         let obj = get_task(reg_str, not_reg_str)
@@ -279,7 +285,7 @@ function do_simple_task(epoch, sec, reg_str) {
 }
 
 function taojinbi_task() {
-    if (!text('今日任务').findOne(1500)) {
+    if (!text('今日任务').findOne(1000)) {
         toast_console('启动淘宝app')
         app.launch('com.taobao.taobao');
         let btn_x = null
@@ -296,9 +302,9 @@ function taojinbi_task() {
             toast_console('无法找到[赚金币]按钮,请重新运行程序'); return
         }
         btn_x.click()
-        toast_console('等待进入到淘金币列表界面')
     }
-    textMatches('每日来访领能量.+').findOne(6000); get_rewards()
+    toast_console('等待进入到淘金币列表界面')
+    textMatches('每日来访领能量.+').findOne(6000);
     do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str)
     feed_chick_task()
     shop_10coin_task()
@@ -313,24 +319,27 @@ function taojinbi_task() {
     toast_console('*****淘金任务执行完毕*****')
 }
 
+function multi_choice() {
+    do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0;
+    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务'])
+    options.forEach(option => {
+        switch (option) {
+            case 0:
+                do_dice_task = 1; break;
+            case 1:
+                do_baba_farm_task = 1; break;
+            case 2:
+                do_xiaoxiaole_task = 1; break;
+        }
+    });
+}
+
 //主函数
 function main() {
     requestScreenCapture(false);
-    if (is_show_choice) {
-        do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0;
-        let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务'])
-        options.forEach(option => {
-            switch (option) {
-                case 0:
-                    do_dice_task = 1; break;
-                case 1:
-                    do_baba_farm_task = 1; break;
-                case 2:
-                    do_xiaoxiaole_task = 1; break;
-            }
-        });
-    }
+    if (is_show_choice) multi_choice();
     console.show();
+    console.log('本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi')
     taojinbi_task();
 }
 
