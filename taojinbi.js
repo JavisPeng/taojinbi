@@ -89,7 +89,8 @@ function get_task(reg_str, not_reg_str) {
 
 //淘金币获取奖励
 function get_rewards() {
-    sleep(500); btn_click(text('领取奖励').findOne(2000)); sleep(2000) //等待调整布局
+    sleep(200); btn_click(text('一键领取').findOne(1000));
+    btn_click(text('领取奖励').findOne(1000)); sleep(1000) //等待调整布局
 }
 
 //确保任务按钮被单击，解决单击时布局发生改变的问题
@@ -288,20 +289,22 @@ function taojinbi_task() {
     if (!text('今日任务').findOne(1000)) {
         toast_console('启动淘宝app')
         app.launch('com.taobao.taobao');
-        let btn_x = null
-        while (!btn_x) {
-            console.log('等待进入淘宝首页(若长时间等待请手动进入淘宝首页)');
-            btn_x = desc('领淘金币').findOne(1000)
+        if (!text('今日任务').findOne(2000)) {
+            let btn_x = null
+            while (!btn_x) {
+                console.log('等待进入淘宝首页(若长时间等待请手动进入淘宝首页)');
+                btn_x = desc('领淘金币').findOne(1000)
+            }
+            btn_x.click()
+            toast_console('等待进入到淘金币主界面')
+            btn_click(text('签到领金币').findOne(3000))
+            btn_click(text('领取奖励').findOne(1000))
+            btn_x = text('赚金币').findOne(3000)
+            if (!btn_x) {
+                toast_console('无法找到[赚金币]按钮,请重新运行程序'); return
+            }
+            btn_x.click()
         }
-        btn_x.click()
-        toast_console('等待进入到淘金币主界面')
-        btn_click(text('签到领金币').findOne(3000))
-        btn_click(text('领取奖励').findOne(1000))
-        btn_x = text('赚金币').findOne(3000)
-        if (!btn_x) {
-            toast_console('无法找到[赚金币]按钮,请重新运行程序'); return
-        }
-        btn_x.click()
     }
     toast_console('等待进入到淘金币列表界面')
     textMatches('每日来访领能量.+').findOne(6000);
