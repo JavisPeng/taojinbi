@@ -53,14 +53,14 @@
 
 # 使用说明
 ## Auto.js中运行
-1.下载 [autojs4.1.1](https://share.weiyun.com/owu3tBNr)
+1. 下载 [autojs4.1.1](https://share.weiyun.com/owu3tBNr)
 2. 在电脑端下载taojinbi.js文件，使用电脑端qq或微信发给手机端
 3. 导入js文件到autojs(可直接在微信/QQ/文件浏览中选择使用其他方式打开)
 4. 在autojs中开启无障碍服务并点击运行导入的js文件
 
 ## 淘金币app
-1.在release页面下载taojinbi.apk,安装
-2.为淘金币开启无障碍服务和悬浮框权限(悬浮框权限在华为手机：设置->应用->应用功能->淘金币->显示在其他应用的上层->允许)
+1. 在release页面下载taojinbi.apk,安装
+2. 为淘金币开启无障碍服务和悬浮框权限(悬浮框权限在华为手机：设置->应用->应用功能->淘金币->显示在其他应用的上层->允许)
 
 
 视频运行实例:https://www.bilibili.com/video/BV1Cy4y1S7qE
