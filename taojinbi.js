@@ -3,11 +3,11 @@ var MAX_EPOCH = 101 //最大执行次数
 var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
 var do_dice_task = 1 // 1表示自动执行[淘宝人生掷色子任务]，0表示跳过不执行
 var do_baba_farm_task = 1 // 1表示自动执行[芭芭农场任务]，0表示跳过不执行
-var do_xiaoxiaole_task = 0 // 1表示自动执行[消消乐任务]，0表示跳过不执行
+var do_xiaoxiaole_task = 1 // 1表示自动执行[消消乐任务]，0表示跳过不执行
 var taojinbi_reg_str = "逛|欢乐|浏览|聚划算|天猫国际|看" //任务主题关键字，若有新的浏览任务出现可在此添加
 var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
 var is_collect_shop = 0 //是否在10金币任务中关注商铺(关注商铺+10金币)  默认不执行 0
-
+var is_show_choice = 1 //是否显示特殊截图任务的选择框(生成app时使用) 默认显示
 
 //===================通用函数=========================
 //点击控件
@@ -210,24 +210,26 @@ function dice_task() {
 //消消乐任务
 function xiaoxiaole_task() {
     if (!assure_click_task('消消')) return
-    sleep(8000);
+    sleep(6000);
     console.log('消消乐,等待进入游戏界面'); console.hide()
     //开心收下奖励
-    cs_click(4, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
-    //第一次返回没有主页按钮
-    back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
+    cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
+    //第一次返回没有主页按钮?
+    //back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
     back(); sleep(1000)
     //回到主页
-    console.log('消消乐,回到主页');
-    cs_click(6, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(2500)
-    //close
-    cs_click(3, '#f5fefb', 0.6, 0.2, 0.3, 0.3); sleep(1000)
+    console.log('消消乐,回到游戏首页');
+    cs_click(3, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(1500)
+    //邮件领取
+    if (cs_click(3, '#11c6bf', 0.4, 0.6, 0.3, 0.3)) {
+        cs_click(2, '#ffffff', 0.7, 0.1, 0.3, 0.4);
+    }
     //滑到屏幕下方
-    for (let i = 0; i < 4; i++)swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 300)
+    for (let i = 0; i < 6; i++)swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 300)
     //点击第一关 绿色圆圈
     sleep(1000); cs_click(3, '#63cbc4', 0.5, 0.3, 0.4, 0.4, true); sleep(2000)
     console.log('消消乐，点击第一关');
-    //开始方块 绿色方块
+    //开始 绿色方块
     cs_click(3, '#11c6bf', 0.3, 0.5, 0.3, 0.3); sleep(5000)
     //消除方块,兼容不同机型
     console.log('消消乐，开始消除方块');
@@ -298,14 +300,14 @@ function taojinbi_task() {
     }
     textMatches('每日来访领能量.+').findOne(6000); get_rewards()
     do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str)
-    if (do_baba_farm_task) baba_farm_task()
-    if (do_dice_task) dice_task()
     feed_chick_task()
     shop_10coin_task()
-    signin_phonecharge_task()
     achievement_signin_task()
     tianmao_task()
     live_room_task()
+    signin_phonecharge_task()
+    if (do_baba_farm_task) baba_farm_task()
+    if (do_dice_task) dice_task()
     if (do_xiaoxiaole_task) xiaoxiaole_task()
     do_simple_task(32, wait_sec, taojinbi_reg_str)
     toast_console('*****淘金任务执行完毕*****')
@@ -314,6 +316,20 @@ function taojinbi_task() {
 //主函数
 function main() {
     requestScreenCapture(false);
+    if (is_show_choice) {
+        do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0;
+        let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务'])
+        options.forEach(option => {
+            switch (option) {
+                case 0:
+                    do_dice_task = 1; break;
+                case 1:
+                    do_baba_farm_task = 1; break;
+                case 2:
+                    do_xiaoxiaole_task = 1; break;
+            }
+        });
+    }
     console.show();
     taojinbi_task();
 }
