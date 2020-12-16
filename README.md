@@ -62,6 +62,7 @@
 4. 在autojs中开启无障碍服务并点击运行导入的js文件
 
 auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
+
 ---
 
 ## 淘金币app运行
@@ -69,6 +70,7 @@ auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
 2. 为淘金币开启无障碍服务和悬浮框权限(悬浮框权限在华为手机：设置->应用->应用功能->淘金币->显示在其他应用的上层->允许)
 
 淘金币app视频运行教程：https://www.bilibili.com/video/BV1kp4y1q7CD/
+
 ---
 
 **请勿使用模拟器运行，实测只奖励100金币**
