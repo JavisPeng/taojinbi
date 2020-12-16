@@ -63,7 +63,6 @@
 
 auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
 
----
 
 ## 淘金币app运行
 1. 在release页面下载taojinbi.apk并安装
@@ -71,7 +70,6 @@ auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
 
 淘金币app视频运行教程：https://www.bilibili.com/video/BV1kp4y1q7CD/
 
----
 
 **请勿使用模拟器运行，实测只奖励100金币**
 
