@@ -72,7 +72,5 @@ auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
 淘金币app视频运行教程：https://www.bilibili.com/video/BV1kp4y1q7CD/
 
 
-**请勿使用模拟器运行，实测只奖励100金币**
-
 # 免责声明
 为本人Auto.js学习交流的开源非营利项目，仅作为程序员之间相互学习交流之用，使用需严格遵守开源许可协议。严禁用于商业用途，禁止使用进行任何盈利活动。对一切非法使用所产生的后果，本人概不负责。
