@@ -172,7 +172,7 @@ function ant_forest_task() {
     let num = 5
     while (num-- && !text('最新动态').findOne(1000));
     if (num_ant_find) {
-        let img = captureScreen()
+        let img = captureScreen(); console.hide()
         let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.2, img.getHeight() * 0.2], threshold: 8 })
         for (let i = 0; i < num_ant_find; i++) {
             for (let j = 0; j < 8; j++) {
@@ -184,7 +184,8 @@ function ant_forest_task() {
             toast_console('找能量/' + i)
         }
     }
-    num = 8
+
+    num = 8; console.show()
     while (num-- && !text('今日任务').findOne(1000)) back()
 }
 
@@ -234,7 +235,7 @@ function dice_task() {
 function xiaoxiaole_task() {
     if (!assure_click_task('消消')) return
     sleep(8000);
-    console.log('消消乐,等待进入游戏界面'); //console.hide()
+    console.log('消消乐,等待进入游戏界面'); console.hide()
     //开心收下奖励
     cs_click(4, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
     //第一次返回没有主页按钮?//back(); sleep(1000); cs_click(3, '#ffffff', 0.6, 0.2, 0.3, 0.5); sleep(500); //单击关闭图标 
@@ -244,9 +245,9 @@ function xiaoxiaole_task() {
         back(); sleep(1000)
         if (cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break
     }
-    sleep(2000) //过渡动画
+    sleep(3000) //过渡动画
     //邮件领取 pass
-    cs_click(2, '#ffffff', 0.6, 0.15, 0.35, 0.5); sleep(500)
+    cs_click(3, '#ffffff', 0.65, 0.15, 0.3, 0.5); sleep(500)
     //滑到屏幕下方
     for (let i = 0; i < 6; i++)swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 5, 600)
     //点击第一关 绿色圆圈
@@ -277,7 +278,7 @@ function xiaoxiaole_task() {
     //回到主页2 金色的回到主页
     cs_click(3, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(3000);
     //返回淘宝按钮
-    back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); //console.show()
+    back(); sleep(1000); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); console.show()
     get_rewards()
 }
 
