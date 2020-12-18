@@ -326,10 +326,11 @@ function taojinbi_task() {
         toast_console('启动淘宝app')
         app.launch('com.taobao.taobao');
         if (!text(list_task_reg).findOne(2000)) {
-            let btn_x = null
-            while (!btn_x) {
-                console.log('等待进入淘宝首页..(若长时间等待请手动进入淘宝首页)');
-                btn_x = desc('领淘金币').findOne(1000)
+            let num = 8
+            while (num-- && !desc('领淘金币').findOne(1000)) back();
+            let btn_x = desc('领淘金币').findOne(500)
+            if (!btn_x) {
+                toast_console('无法返回到淘宝主界面,请手动回到淘宝主界面后重新运行'); exit()
             }
             btn_x.click()
             toast_console('进入到淘金币主界面..')
@@ -337,7 +338,7 @@ function taojinbi_task() {
             btn_click(text('领取奖励').findOne(1000))
             btn_x = text('赚金币').findOne(3000)
             if (!btn_x) {
-                toast_console('无法找到[赚金币]按钮,请重新运行程序'); return
+                toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
             }
             btn_x.click()
         }
@@ -366,7 +367,6 @@ function taojinbi_task() {
 
 
 //=================活力活动的任务=====================
-
 function do_huoli_simple_task() {
     var key_reg_str = "逛|浏览|旗舰|会场|挑战|开|C|活力步数|官方|羊毛|天猫"
     let not_reg_str = '消消' //需要特殊执行的任务
