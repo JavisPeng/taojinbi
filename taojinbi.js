@@ -6,8 +6,10 @@ var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问�
 var do_dice_task = 1 // 1表示自动执行[淘宝人生掷色子任务]，0表示跳过不执行
 var do_baba_farm_task = 1 // 1表示自动执行[芭芭农场任务]，0表示跳过不执行
 var do_xiaoxiaole_task = 1 // 1表示自动执行[消消乐任务]，0表示跳过不执行
+var do_tianmao_task = 1 //1表示执行[去天猫APP领红包任务]，0表示跳过不执行
 var do_huoli_task = 1 // 1表示在执行完淘金币后自动执行[活力中心]任务，0表示跳过不执行
 var taojinbi_reg_str = "逛|浏览|聚划算|天猫国际|看" //简单任务主题关键字，若有新的浏览任务出现可在此添加
+var not_taojinbi_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就' //需要在淘金币简单浏览任务中,跳过不执行的主题关键字
 var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
 var is_collect_shop = 0 //是否在10金币任务中关注商铺(关注商铺+10金币)  默认不执行 0
 var is_show_choice = 1 //是否在启动时,显示特殊截图任务的选择框(生成app时使用) 默认显示
@@ -94,7 +96,7 @@ function get_task(key_reg_str, not_key_reg_str, btn_reg_str) {
 
 //淘金币获取奖励
 function get_rewards() {
-    sleep(500); btn_click(text('领取奖励').findOne(1000)); sleep(2500) //等待调整布局
+    sleep(500); btn_click(text('领取奖励').findOne(1000)); sleep(3000) //等待调整布局
 }
 
 //确保任务按钮被单击，解决单击时布局发生改变的问题
@@ -177,7 +179,7 @@ function ant_forest_task() {
     sleep(2000)
     let num = 5
     while (num-- && !text('最新动态').findOne(1000));
-    if (num_ant_find) {
+    if (num_ant_find && text('最新动态').findOne(500)) {
         let img = captureScreen(); console.hide()
         let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.2, img.getHeight() * 0.2], threshold: 8 })
         for (let i = 0; i < num_ant_find; i++) {
@@ -214,7 +216,7 @@ function shop_10coin_task() {
 function duobao_task() {
     toast_console('查看-100淘金币夺宝任务')
     if (!assure_click_task('100淘金币')) return
-    wait(wait_sec); back(); sleep(1000)
+    wait(wait_sec); assure_back(); sleep(1000)
     for (let i = 0; i < 3; i++) {
         let list_btn = className('android.view.View').clickable(true).find()
         if (list_btn.length > 16) {
@@ -230,7 +232,7 @@ function tianmao_task() {
     toast_console('查看-去天猫APP领红包任务')
     if (!assure_click_task('去天猫APP领红包')) return
     sleep(4000)
-    if (text('攻略').findOne(4000)) wait(wait_sec)
+    if (text('攻略').findOne(5000)) wait(wait_sec)
     assure_back(); get_rewards()
 }
 
@@ -238,15 +240,21 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生逛街领能量掷骰子任务')
     if (!assure_click_task('淘宝人生逛街领能量')) return
-    sleep(5000)
+    sleep(7000)
+    //去他大爷的神秘礼物
+    toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)')
+    cs_click(3, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
     //单击礼包
-    cs_click(3, '#fee998', 0.3, 0.2, 0.4, 0.4);
+    toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)')
+    cs_click(2, '#fee998', 0.3, 0.2, 0.4, 0.4);
     //橙色收下奖励按钮按钮
+    toast_console('掷骰子任务-点击6次开心收下按钮(一点都不开心- -)')
     for (let i = 0; i < 6; i++) {
         cs_click(1, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true); sleep(500)
     }
     sleep(1000)
     //金色前进按钮
+    toast_console('掷骰子任务-尝试点击色子前进')
     cs_click(8, '#fff89d', 0.2, 0.5, 0.45, 0.3); sleep(3000)
     //橙色收下奖励按钮按钮
     cs_click(2, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true);
@@ -352,15 +360,15 @@ function taojinbi_task() {
         }
     }
     toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
-    let not_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就' //需要特殊执行的任务
     let btn_reg_str = '去完成|去施肥'
     //防止特殊任务卡顿，所以任务默认执行2次
     for (let i = 0; i < 2; i++) {
-        do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_reg_str, list_task_reg, btn_reg_str)
+        do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_taojinbi_reg_str, list_task_reg, btn_reg_str)
         shop_10coin_task(); feed_chick_task()
         if (do_baba_farm_task) baba_farm_task()
         if (do_dice_task) dice_task()
-        tianmao_task(); duobao_task(); achievement_signin_task(); signin_phonecharge_task(11); ant_forest_task()
+        if (do_tianmao_task) tianmao_task()
+        duobao_task(); achievement_signin_task(); signin_phonecharge_task(11); ant_forest_task()
         if (do_xiaoxiaole_task) xiaoxiaole_task()
         get_rewards()
     }
@@ -368,6 +376,20 @@ function taojinbi_task() {
 }
 
 //=================活力中心的任务=====================
+
+
+//活力步数兑换红包
+function exchange_red_envelope_task() {
+    toast_console('查看-活力步数兑换红包任务')
+    if (!assure_click_task('步换红包')) return
+    if (btn_click(text('去使用').findOne(1000))) {
+        swipe(device.width / 2, device.height / 5, device.width / 2, device.height / 2, 500)
+    }
+    btn_click(textContains('免费领取').findOne(1000));
+    sleep(1000); back()
+}
+
+
 function do_huoli_simple_task() {
     var key_reg_str = "逛|浏览|会场|挑战|开|C|活力步数|羊毛|天猫|店"
     let not_reg_str = '消消' //需要特殊执行的任务
@@ -395,7 +417,6 @@ function do_huoli_simple_task() {
         sleep(1500) //等待布局调整
     }
 }
-
 
 function huoli_task() {
     toast_console('正在去活力中心的路上........')
