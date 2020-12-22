@@ -1,5 +1,8 @@
 auto.waitFor() //等待开启无障碍服务 
 
+//===================用户可编辑参数===================
+var num_train = 36 //自动训练的次数，设置为0表示不自动训练，默认为36
+
 //点击控件
 function btn_click(x) { if (x) return x.click() }
 
@@ -120,7 +123,7 @@ function huoli_task() {
     }
     console.log('开始自动训练..')
     btn_click(text('关闭').findOne(1000))
-    for (let i = 0; i < 36; i++) {
+    for (let i = 0; i < num_train; i++) {
         btn_click(text('训练').findOne(1000)); sleep(200)
         if (!btn_click(text('开心收下').findOne(400)) && !text('训练').findOne(400)) {
             let list_btn = text('').className('Button').clickable(true).find()
