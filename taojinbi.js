@@ -1,13 +1,14 @@
 auto.waitFor() //等待开启无障碍服务 
 
 //===================用户可编辑参数===================
-var MAX_EPOCH = 101 //最大执行次数
+var MAX_ALL_TASK_EPOCH = 3 //所有任务重复次数,解决新增任务问题
+var MAX_EPOCH = 101 //浏览任务最大执行次数
 var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
+var do_notification_task = 1 //1表示自动执行[开启淘宝通知权限任务],0表示跳过不执行
 var do_dice_task = 1 // 1表示自动执行[淘宝人生掷色子任务]，0表示跳过不执行
 var do_baba_farm_task = 1 // 1表示自动执行[芭芭农场任务]，0表示跳过不执行
 var do_xiaoxiaole_task = 1 // 1表示自动执行[消消乐任务]，0表示跳过不执行
 var do_tianmao_task = 1 //1表示执行[去天猫APP领红包任务]，0表示跳过不执行
-var do_huoli_task = 1 // 1表示在执行完淘金币后自动执行[活力中心]任务，0表示跳过不执行
 var taojinbi_reg_str = "逛|浏览|聚划算|天猫国际|看" //简单任务主题关键字，若有新的浏览任务出现可在此添加
 var not_taojinbi_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就' //需要在淘金币简单浏览任务中,跳过不执行的主题关键字
 var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
@@ -39,7 +40,6 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
             if (flipup != undefined) {
                 point.x = img.getWidth() - point.x; point.y = img.getHeight() - point.y
             }
-            //console.log(point);
             click(point.x, point.y); return true
         }
         sleep(1000)
@@ -76,11 +76,11 @@ function wait(sec) {
 
 //根据正则表达式获取任务
 function get_task(key_reg_str, not_key_reg_str, btn_reg_str) {
-    sleep(500); textMatches('每日来访领能量.+|已打卡').findOne(2000);
-    if (btn_reg_str == undefined) btn_reg_str = '去完成|去施肥|去消除|去兑换'
+    sleep(500); textMatches('每日来访领能量.+').findOne(2000);
+    if (btn_reg_str == undefined) btn_reg_str = '去完成|去施肥|去领取'
     let list_x = textMatches(btn_reg_str).find()
     let reg = new RegExp(key_reg_str)
-    let not_reg = not_key_reg_str == undefined ? new RegExp('z') : new RegExp(not_key_reg_str)
+    let not_reg = not_key_reg_str == undefined ? new RegExp('javis486') : new RegExp(not_key_reg_str)
     for (let i = 0; i < list_x.length; i++) {
         let btn_x = list_x[i].parent().child(0).child(0)
         if (!btn_x) continue
@@ -100,11 +100,10 @@ function get_rewards() {
 }
 
 //确保任务按钮被单击，解决单击时布局发生改变的问题
-function assure_click_task(name, list_task_reg) {
-    if (list_task_reg == undefined) list_task_reg = '打开任务面板|今日任务'
+function assure_click_task(name, not_key_reg_str, btn_reg_str) {
     let obj = null
     for (let i = 0; i < 3; i++) {
-        obj = get_task(name)
+        obj = get_task(name, not_key_reg_str, btn_reg_str)
         if (!obj) return false
         if (obj.x) break
     }
@@ -116,7 +115,7 @@ function assure_click_task(name, list_task_reg) {
 }
 
 function assure_back(list_task_reg) {
-    if (list_task_reg == undefined) list_task_reg = '打开任务面板|今日任务'
+    if (list_task_reg == undefined) list_task_reg = '今日任务'
     let num = 8
     while (num-- && !textMatches(list_task_reg).findOne(1000)) back()
 }
@@ -196,9 +195,9 @@ function ant_forest_task() {
 }
 
 //逛好店并领10金币
-function shop_10coin_task() {
+function shop_10coin_task(not_key_reg_str, btn_reg_str) {
     toast_console('查看-逛好店并领10金币任务')
-    if (!assure_click_task('逛好店领')) return
+    if (!assure_click_task('逛好店领', not_key_reg_str, btn_reg_str)) return
     for (let i = 0; i < 10 && is_earn_10coin; i++) {
         let btn_x = desc('逛10秒+10').findOne(2000)
         toast_console('逛10秒+10金币/' + (i + 1))
@@ -248,8 +247,8 @@ function dice_task() {
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)')
     cs_click(2, '#fee998', 0.3, 0.2, 0.4, 0.4);
     //橙色收下奖励按钮按钮
-    toast_console('掷骰子任务-点击6次开心收下按钮(一点都不开心- -)')
-    for (let i = 0; i < 6; i++) {
+    toast_console('掷骰子任务-点击5次开心收下按钮(一点都不开心- -)')
+    for (let i = 0; i < 5; i++) {
         cs_click(1, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true); sleep(500)
     }
     sleep(1000)
@@ -262,6 +261,33 @@ function dice_task() {
     //橙色返回淘宝按钮
     cs_click(3, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true)
     btn_click(text('立刻离开').findOne(1000)); get_rewards()
+}
+
+//关闭/开启淘宝通知
+function toggle_notification_permission() {
+    let intent = new Intent();
+    intent.setAction("android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS"); //所有应用
+    app.startActivity(intent);
+    let txt_search = desc('搜索查询').findOne(3000)
+    if (txt_search) {
+        txt_search.setText('淘宝'); sleep(500)
+        btn_position_click(text('手机淘宝').findOne(1000)); sleep(500)
+        btn_position_click(text('通知管理').findOne(1000)); sleep(500)
+        btn_position_click(idContains('widget_frame').findOne(1000))
+    }
+}
+
+//淘宝通知权限任务/仅在华为机上测试通过
+function notification_permission_task() {
+    toast_console('查看-开启通知权限任务')
+    if (!assure_click_task('开启通知权限')) return
+    sleep(1000)
+    toggle_notification_permission()
+    app.launch('com.taobao.taobao'); sleep(500)
+    assure_back()
+    toggle_notification_permission()
+    app.launch('com.taobao.taobao'); sleep(500)
+    get_rewards();
 }
 
 //消消乐任务
@@ -310,10 +336,20 @@ function xiaoxiaole_task() {
     //回到主页1 灰色的暂时离开
     cs_click(2, '#9d6031', 0.2, 0.2, 0.4, 0.5, true)
     //回到主页2 金色的回到主页
-    cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(2000);
+    cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(1000);
     //返回淘宝按钮
     back(); sleep(800); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); console.show()
     get_rewards()
+}
+
+//活力步数兑换红包
+function exchange_red_envelope_task() {
+    toast_console('查看-活力步数兑换红包任务')
+    if (!assure_click_task('步数')) return
+    if (btn_click(text('去使用').findOne(1000))) {
+        swipe(device.width / 2, device.height / 5, device.width / 2, device.height / 2, 500)
+    }
+    btn_click(textContains('免费领取').findOne(1000)); assure_back(); get_rewards()
 }
 
 //执行简单的浏览任务
@@ -360,103 +396,26 @@ function taojinbi_task() {
         }
     }
     toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
-    let btn_reg_str = '去完成|去施肥'
-    //防止特殊任务卡顿，所以任务默认执行2次
-    for (let i = 0; i < 2; i++) {
+    let btn_reg_str = '去完成|去施肥|去领取'
+    for (let i = 0; i < MAX_ALL_TASK_EPOCH; i++) {
         do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_taojinbi_reg_str, list_task_reg, btn_reg_str)
         shop_10coin_task(); feed_chick_task()
         if (do_baba_farm_task) baba_farm_task()
         if (do_dice_task) dice_task()
         if (do_tianmao_task) tianmao_task()
-        duobao_task(); achievement_signin_task(); signin_phonecharge_task(11); ant_forest_task()
+        duobao_task(); achievement_signin_task(); signin_phonecharge_task(11)
+        ant_forest_task(); exchange_red_envelope_task()
+        if (do_notification_task) notification_permission_task()
         if (do_xiaoxiaole_task) xiaoxiaole_task()
         get_rewards()
     }
     toast_console('*****淘金任务执行完毕*****')
 }
 
-//=================活力中心的任务=====================
-
-
-//活力步数兑换红包
-function exchange_red_envelope_task() {
-    toast_console('查看-活力步数兑换红包任务')
-    if (!assure_click_task('步换红包')) return
-    if (btn_click(text('去使用').findOne(1000))) {
-        swipe(device.width / 2, device.height / 5, device.width / 2, device.height / 2, 500)
-    }
-    btn_click(textContains('免费领取').findOne(1000));
-    sleep(1000); back()
-}
-
-
-function do_huoli_simple_task() {
-    var key_reg_str = "逛|浏览|会场|挑战|开|C|活力步数|羊毛|天猫|店"
-    let not_reg_str = '消消' //需要特殊执行的任务
-    let btn_reg_str = "去领取|去浏览|去逛逛|去开启|去参赛|去夺宝|去挑战"
-    let btn_back_imm = /去开启|去参赛|去夺宝|去挑战/   //按钮立即返回
-    let key_back_imm = /太舞滑雪|爱攒油|金币小镇/   //主题关键字立即返回
-    for (let i = 0; i < MAX_EPOCH; i++) {
-        let sec = 17
-        let obj = get_task(key_reg_str, not_reg_str, btn_reg_str)
-        if (!obj) {
-            toast_console('活力中心-简单浏览任务执行完毕'); break
-        }
-        obj.x.click()
-        if (obj.txt.indexOf('活力步数') > -1) continue //活力步数直接领取
-        if (btn_back_imm.test(obj.x.text()) || key_back_imm.test(obj.txt)) sec = 3
-        if (obj.txt.indexOf('逛天猫燃冬季主会场') > -1) sec = 26
-        if (obj.txt.indexOf('薅羊毛') > -1 || obj.txt.indexOf('淘宝人生') > -1) sec = 9
-        wait(sec)
-        let num = 8;
-        while (num-- && !text('打开任务面板').findOne(1000)) {
-            back()
-            btn_click(text('残忍离开').findOne(500))
-            if (obj.txt.indexOf('淘宝人生') > -1) cs_click(2, '#ff7d44', 0.15, 0.6, 0.45, 0.3)
-        }
-        sleep(1500) //等待布局调整
-    }
-}
-
-function huoli_task() {
-    toast_console('正在去活力中心的路上........')
-    app.launch('com.taobao.taobao'); sleep(1000)
-    let num = 8; let list_task_reg = '打开任务面板';
-    while (num-- && !desc('我的淘宝').findOne(1000)) back()
-    let btn_x = desc('我的淘宝').findOne(1000)
-    if (btn_x) {
-        btn_x.click()
-        btn_x = text('活力中心').findOne(1000)
-        if (btn_x) btn_x.parent().child(0).click(); sleep(1000)
-        btn_x = text(list_task_reg).findOne(2000)
-        if (btn_x) {
-            toast_console('打开活力中心任务面板')
-            btn_x.click(); sleep(500)
-            for (let i = 0; i < 2; i++) {
-                btn_click(text('去打卡').findOne(1500));
-                do_huoli_simple_task()
-                exchange_red_envelope_task()
-            }
-            if (do_xiaoxiaole_task) xiaoxiaole_task()
-            toast_console('***活力中心任务执行完毕***')
-        }
-    }
-    toast_console('开始自动训练..')
-    btn_click(text('关闭').findOne(1000))
-    for (let i = 0; i < 36; i++) {
-        btn_click(text('训练').findOne(1000)); sleep(200)
-        if (!btn_click(text('开心收下').findOne(400)) && !text('训练').findOne(400)) {
-            let list_btn = text('').className('Button').clickable(true).find()
-            if (list_btn.length > 0) list_btn[list_btn.length - 1].click()
-        }
-        console.log("训练/", i + 1);
-    }
-}
-//=================活力中心的任务=====================
 
 function multi_choice() {
-    do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0; num_ant_find = 0; do_huoli_task = 0;
-    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '活力中心(淘金币完成后执行)'])
+    do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0; num_ant_find = 0; do_notification_task = 0;
+    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '淘宝通知权限任务'])
     options.forEach(option => {
         switch (option) {
             case 0:
@@ -468,7 +427,7 @@ function multi_choice() {
             case 3:
                 num_ant_find = 32; break;
             case 4:
-                do_huoli_task = 1; break;
+                do_notification_task = 1; break;
         }
     });
 }
@@ -480,7 +439,6 @@ function main() {
     console.show();
     console.log('本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi')
     taojinbi_task();
-    if (do_huoli_task) huoli_task()
     toast_console('###***全部任务执行完毕***###')
 }
 
