@@ -23,7 +23,7 @@
 # 更新日志
 
 **v1.3.4** 2020年12月22日19:46:20
-1. 淘金币新增[淘宝通知权限任务],开启后会再执行关闭(默认在通知关闭下才有该任务,在华为机上测试通过)
+1. 淘金币新增[淘宝通知权限任务],开启后会再执行关闭 (默认在通知关闭下才有该任务,在华为机上测试通过)。**至此淘宝币全任务在P30Pro上测试通过**，当然不包含特定时间刷的任务和下单任务
 2. 个人精力有限，今后只重点维护淘金币任务，因而把活力中心代码分离出来(huoli.js)
 
 **v1.3.3** 2020年12月21日19:50:31
@@ -95,7 +95,7 @@ auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
 
 
 ## 淘金币app运行
-1. 在(release页面)[https://github.com/JavisPeng/taojinbi/releases]下载taojinbi.apk并安装
+1. 在[release页面](https://github.com/JavisPeng/taojinbi/releases)下载taojinbi.apk并安装
 2. 为淘金币开启无障碍服务和悬浮框权限(悬浮框权限在华为手机：设置->应用->应用功能->淘金币->显示在其他应用的上层->允许)
 
 淘金币app视频运行教程：https://www.bilibili.com/video/BV1kp4y1q7CD/
