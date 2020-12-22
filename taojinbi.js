@@ -386,9 +386,12 @@ function taojinbi_task() {
             if (!btn_x) {
                 toast_console('无法返回到淘宝主界面,请手动回到淘宝主界面后重新运行'); exit()
             }
-            btn_x.click(); toast_console('进入到淘金币主界面..')
-            btn_click(text('签到领金币').findOne(3000)); btn_click(text('领取奖励').findOne(1000))
-            btn_x = text('赚金币').findOne(3000)
+            btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
+            for (let i = 0; i < 8; i++) {
+                btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
+                btn_x = text('赚金币').findOne(1000)
+                if (btn_x) break
+            }
             if (!btn_x) {
                 toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
             }
