@@ -13,7 +13,7 @@ var taojinbi_reg_str = "逛|浏览|聚划算|天猫国际|看" //简单任务主
 var not_taojinbi_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就' //需要在淘金币简单浏览任务中,跳过不执行的主题关键字
 var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
 var is_collect_shop = 0 //是否在10金币任务中关注商铺(关注商铺+10金币)  默认不执行 0
-var is_show_choice = 1 //是否在启动时,显示特殊截图任务的选择框(生成app时使用) 默认显示
+var is_show_choice = 1 //是否在启动时,显示特殊任务选择框 默认显示
 var num_ant_find = 32 //在蚂蚁森林执行找能量的次数,0表示直接返回不收取能量,默认32
 
 
@@ -120,7 +120,6 @@ function assure_back(list_task_reg) {
     while (num-- && !textMatches(list_task_reg).findOne(1000)) back()
 }
 
-
 //芭芭农场任务
 function baba_farm_task() {
     toast_console('查看-芭芭农场任务')
@@ -215,7 +214,7 @@ function shop_10coin_task(not_key_reg_str, btn_reg_str) {
 function duobao_task() {
     toast_console('查看-100淘金币夺宝任务')
     if (!assure_click_task('100淘金币')) return
-    wait(wait_sec); assure_back(); sleep(1000)
+    wait(wait_sec); back(); sleep(1000)
     for (let i = 0; i < 3; i++) {
         let list_btn = className('android.view.View').clickable(true).find()
         if (list_btn.length > 16) {
@@ -279,14 +278,15 @@ function toggle_notification_permission() {
 
 //淘宝通知权限任务/仅在华为机上测试通过
 function notification_permission_task() {
-    toast_console('查看-开启通知权限任务')
+
+    toast_console('查看-开启通知权限任务'); console.hide()
     if (!assure_click_task('开启通知权限')) return
     sleep(1000)
     toggle_notification_permission()
     app.launch('com.taobao.taobao'); sleep(500)
     assure_back()
     toggle_notification_permission()
-    app.launch('com.taobao.taobao'); sleep(500)
+    app.launch('com.taobao.taobao'); sleep(500); console.show()
     get_rewards();
 }
 
@@ -338,7 +338,7 @@ function xiaoxiaole_task() {
     //回到主页2 金色的回到主页
     cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(1000);
     //返回淘宝按钮
-    back(); sleep(800); cs_click(3, '#ff6e09', 0.2, 0.75, 0.45, 0.2); console.show()
+    back(); sleep(800); cs_click(3, '#ff6e09', 0.2, 0.2, 0.4, 0.4, true); console.show()
     get_rewards()
 }
 
@@ -369,13 +369,14 @@ function do_simple_task(epoch, sec, reg_str, not_reg_str, list_task_reg, btn_reg
         while (num-- && !text(list_task_reg).findOne(1000)) {
             back(); btn_position_click(desc('继续退出').findOne(200))
             btn_click(textContains('残忍离开|回到淘宝|立即领取').findOne(1000))
+            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true)
         }
         get_rewards()
     }
 }
 
-function taojinbi_task() {
-    let list_task_reg = '今日任务';
+//进入到淘金币列表界面
+function get_into_taojinbi_task_list(list_task_reg) {
     if (!text(list_task_reg).findOne(1000)) {
         toast_console('启动淘宝app')
         app.launch('com.taobao.taobao');
@@ -399,8 +400,15 @@ function taojinbi_task() {
         }
     }
     toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
+}
+
+
+function taojinbi_task() {
+    let list_task_reg = '今日任务';
     let btn_reg_str = '去完成|去施肥|去领取'
     for (let i = 0; i < MAX_ALL_TASK_EPOCH; i++) {
+        toast_console("#第" + (i + 1) + "次执行全任务")
+        get_into_taojinbi_task_list(list_task_reg)
         do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_taojinbi_reg_str, list_task_reg, btn_reg_str)
         shop_10coin_task(); feed_chick_task()
         if (do_baba_farm_task) baba_farm_task()
