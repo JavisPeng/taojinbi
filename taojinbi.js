@@ -175,7 +175,7 @@ function ant_forest_task() {
     toast_console('查看-蚂蚁森林任务')
     if (!assure_click_task('蚂蚁森林')) return
     sleep(2000)
-    let num = 5
+    let num = 10
     while (num-- && !text('最新动态').findOne(1000));
     if (num_ant_find && text('最新动态').findOne(500)) {
         let img = captureScreen(); console.hide()
@@ -337,6 +337,8 @@ function xiaoxiaole_task() {
     cs_click(2, '#9d6031', 0.2, 0.2, 0.4, 0.5, true)
     //回到主页2 金色的回到主页
     cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45); sleep(1000);
+    //再挑战?
+    cs_click(3, '#ffffff', 0.6, 0.15, 0.35, 0.5); sleep(500)
     //返回淘宝按钮
     back(); sleep(800); cs_click(3, '#ff6e09', 0.2, 0.2, 0.4, 0.4, true); console.show()
     get_rewards()
@@ -425,7 +427,7 @@ function taojinbi_task() {
 
 
 function multi_choice() {
-    do_dice_task = 0; do_baba_farm_task = 0; do_xiaoxiaole_task = 0; num_ant_find = 0; do_notification_task = 0;
+    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_notification_task = 0
     let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '淘宝通知权限任务'])
     options.forEach(option => {
         switch (option) {
