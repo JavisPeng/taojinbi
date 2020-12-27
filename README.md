@@ -24,6 +24,7 @@
 
 **v1.3.6** 2020年12月24日19:22:57
 1. 解决消消乐完成消除回到主界面，出现[再玩一次]弹窗问题
+2. 淘金币auto.js-v1.3.6全任务视频演示：https://www.bilibili.com/video/BV1Dt4y1k7xq/
 
 **v1.3.5** 2020年12月23日20:13:04
 1. 解决[淘宝吃货任务]弹窗导致无法返回问题
@@ -104,7 +105,7 @@
 3. 导入js文件到autojs(可直接在微信/QQ/文件浏览中选择使用其他方式打开)
 4. 在autojs中开启无障碍服务并点击运行导入的js文件
 
-auto.js视频运行教程:https://www.bilibili.com/video/BV1Cy4y1S7qE
+auto.js视频运行教程:https://www.bilibili.com/video/BV1Dt4y1k7xq/
 
 
 ## 淘金币app运行
