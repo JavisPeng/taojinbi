@@ -40,7 +40,7 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
             if (flipup != undefined) {
                 point.x = img.getWidth() - point.x; point.y = img.getHeight() - point.y
             }
-            click(point.x, point.y); return true
+            return click(point.x, point.y);
         }
         sleep(1000)
     }
@@ -117,7 +117,7 @@ function assure_click_task(name, not_key_reg_str, btn_reg_str) {
 function assure_back(list_task_reg) {
     if (list_task_reg == undefined) list_task_reg = '今日任务'
     let num = 8
-    while (num-- && !textMatches(list_task_reg).findOne(1000)) back()
+    while (num-- && !text(list_task_reg).findOne(1000)) back()
 }
 
 //芭芭农场任务
@@ -179,9 +179,9 @@ function ant_forest_task() {
     while (num-- && !text('最新动态').findOne(1000));
     if (num_ant_find && text('最新动态').findOne(500)) {
         let img = captureScreen(); console.hide()
-        let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.2, img.getHeight() * 0.2], threshold: 8 })
+        let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.25, img.getHeight() * 0.25], threshold: 8 })
         for (let i = 0; i < num_ant_find; i++) {
-            for (let j = 0; j < 8; j++) {
+            for (let j = 0; j < 12; j++) {
                 if (!cs_click(1, '#b6ff00', 0.1, 0.2, 0.8, 0.5)) break
                 sleep(400)
             }
@@ -230,7 +230,10 @@ function tianmao_task() {
     toast_console('查看-去天猫APP领红包任务')
     if (!assure_click_task('去天猫APP领红包')) return
     sleep(4000)
-    if (text('攻略').findOne(5000)) wait(wait_sec)
+    if (text('攻略').findOne(5000)) {
+        btn_click(textContains('继续逛逛').findOne(1000))
+        wait(wait_sec)
+    }
     assure_back(); get_rewards()
 }
 
@@ -238,10 +241,10 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生逛街领能量掷骰子任务')
     if (!assure_click_task('淘宝人生逛街领能量')) return
-    sleep(7000)
+    sleep(8000)
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)')
-    cs_click(3, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
+    cs_click(4, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)')
     cs_click(2, '#fee998', 0.3, 0.2, 0.4, 0.4);
@@ -418,8 +421,8 @@ function taojinbi_task() {
         if (do_tianmao_task) tianmao_task()
         duobao_task(); achievement_signin_task(); signin_phonecharge_task(11)
         ant_forest_task(); exchange_red_envelope_task()
-        if (do_notification_task) notification_permission_task()
         if (do_xiaoxiaole_task) xiaoxiaole_task()
+        if (do_notification_task) notification_permission_task()
         get_rewards()
     }
     toast_console('*****淘金任务执行完毕*****')
@@ -427,8 +430,8 @@ function taojinbi_task() {
 
 
 function multi_choice() {
-    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_notification_task = 0
-    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '淘宝通知权限任务'])
+    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_notification_task = do_tianmao_task = 0
+    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '淘宝通知权限任务', '天猫APP领红包任务'])
     options.forEach(option => {
         switch (option) {
             case 0:
@@ -441,6 +444,8 @@ function multi_choice() {
                 num_ant_find = 32; break;
             case 4:
                 do_notification_task = 1; break;
+            case 5:
+                do_tianmao_task = 1; break;
         }
     });
 }
