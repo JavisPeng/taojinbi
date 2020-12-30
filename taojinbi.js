@@ -212,8 +212,8 @@ function shop_10coin_task(not_key_reg_str, btn_reg_str) {
 
 //100淘金币夺宝任务
 function duobao_task() {
-    toast_console('查看-100淘金币夺宝任务')
-    if (!assure_click_task('100淘金币')) return
+    toast_console('查看-淘金币夺宝任务')
+    if (!assure_click_task('淘金币赢')) return
     wait(wait_sec); back(); sleep(1000)
     for (let i = 0; i < 3; i++) {
         let list_btn = className('android.view.View').clickable(true).find()
