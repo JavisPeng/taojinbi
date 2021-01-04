@@ -424,8 +424,8 @@ function taojinbi_task() {
 
 
 function multi_choice() {
-    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_tianmao_task = 0
-    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '天猫APP领红包任务']) 
+    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_tianmao_task = do_notification_task = 0
+    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '天猫APP领红包任务','开启淘宝通知权限任务'])
     options.forEach(option => {
         switch (option) {
             case 0:
@@ -438,6 +438,8 @@ function multi_choice() {
                 num_ant_find = 32; break;
             case 4:
                 do_tianmao_task = 1; break;
+            case 5:
+                do_notification_task = 1; break;
         }
     });
 }
