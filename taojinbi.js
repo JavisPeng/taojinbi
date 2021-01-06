@@ -203,21 +203,12 @@ function shop_10coin_task(not_key_reg_str, btn_reg_str) {
         if (!btn_x) break
         btn_x.parent().click(); sleep(12500);
         if (is_collect_shop) {
-            text('关注+10').findOne(500).click(); sleep(500);
+            btn_click(text('关注+10').findOne(800))
         }
         back(); sleep(800);
     }
     wait(wait_sec); assure_back(); get_rewards()
 }
-
-//100淘金币夺宝任务
-// function duobao_task() {
-//     toast_console('查看-淘金币夺宝任务')
-//     if (!assure_click_task('元红包')) return
-//     wait(wait_sec); back(); sleep(1000)
-//     cs_click(3, '#ff7d44', 0.1, 0.15, 0.5, 0.5, true)
-//     get_rewards()
-// }
 
 //去天猫红包任务
 function tianmao_task() {
@@ -425,7 +416,7 @@ function taojinbi_task() {
 
 function multi_choice() {
     do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_tianmao_task = do_notification_task = 0
-    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '天猫APP领红包任务','开启淘宝通知权限任务'])
+    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '天猫APP领红包任务', '开启淘宝通知权限任务'])
     options.forEach(option => {
         switch (option) {
             case 0:
