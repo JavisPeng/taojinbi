@@ -203,7 +203,8 @@ function shop_10coin_task(not_key_reg_str, btn_reg_str) {
         if (!btn_x) break
         btn_x.parent().click(); sleep(12500);
         if (is_collect_shop) {
-            btn_click(text('关注+10').findOne(800))
+            btn_x = text('关注+10').findOne(800)
+            btn_click(btn_x.parent())
         }
         back(); sleep(800);
     }
