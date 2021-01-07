@@ -55,6 +55,12 @@ function assure_click_task(name, not_key_reg_str, btn_reg_str) {
     return true
 }
 
+function assure_back(list_task_reg) {
+    if (list_task_reg == undefined) list_task_reg = '做任务赢奖励'
+    let num = 8
+    while (num-- && !text(list_task_reg).findOne(1000)) back()
+}
+
 //根据正则表达式获取任务
 function get_task(key_reg_str, not_key_reg_str, btn_reg_str) {
     sleep(500); textMatches('每日来访领能量.+').findOne(2000);
@@ -175,8 +181,7 @@ function do_huoli_simple_task() {
         let num = 8;
         while (num-- && !text('做任务赢奖励').findOne(1000)) {
             back()
-            btn_click(textContains('残忍离开|回到淘宝|立即领取|残忍拒绝').findOne(500))
-            btn_click(descContains('残忍离开|回到淘宝|立即领取|残忍拒绝').findOne(500))
+            btn_click(textContains('残忍离开|回到淘宝|立即领取|残忍拒绝').findOne(800))
             if (obj.txt.indexOf('淘宝人生') > -1) cs_click(2, '#ff7d44', 0.15, 0.6, 0.45, 0.3)
         }
         sleep(1500) //等待布局调整
