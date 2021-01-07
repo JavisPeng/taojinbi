@@ -202,8 +202,8 @@ function shop_10coin_task(not_key_reg_str, btn_reg_str) {
         toast_console('逛10秒+10金币/' + (i + 1))
         if (!btn_x) break
         btn_x.parent().click(); sleep(12500);
-        if (is_collect_shop) {
-            btn_click(text('关注+10').findOne(800))
+        if (is_collect_shop && text('关注+10').exists()) {
+            btn_click(text('关注+10').findOne(800).parent())
         }
         back(); sleep(800);
     }
