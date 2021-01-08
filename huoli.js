@@ -1,4 +1,5 @@
 auto.waitFor() //等待开启无障碍服务 
+var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
 
 //点击控件
 function btn_click(x) { if (x) return x.click() }
