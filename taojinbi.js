@@ -117,7 +117,10 @@ function assure_click_task(name, not_key_reg_str, btn_reg_str) {
 function assure_back(list_task_reg) {
     if (list_task_reg == undefined) list_task_reg = '今日任务'
     let num = 8
-    while (num-- && !text(list_task_reg).findOne(1000)) back()
+    while (num-- && !text(list_task_reg).findOne(1000)) {
+        back()
+        btn_click(text("残忍离开").findOne(500))
+    }
 }
 
 //芭芭农场任务
@@ -267,10 +270,9 @@ function toggle_notification_permission() {
 
 //淘宝通知权限任务/仅在华为机上测试通过
 function notification_permission_task() {
-
-    toast_console('查看-开启通知权限任务'); console.hide()
+    toast_console('查看-开启通知权限任务');
     if (!assure_click_task('开启通知权限')) return
-    sleep(1000)
+    console.hide(); sleep(1000)
     toggle_notification_permission()
     app.launch('com.taobao.taobao'); sleep(500)
     assure_back()
@@ -333,7 +335,7 @@ function xiaoxiaole_task() {
     get_rewards()
 }
 
-//活力步数兑换红包
+//天天红包赛
 function exchange_red_envelope_task() {
     toast_console('查看-活力步数兑换红包任务')
     if (!assure_click_task('步数')) return
@@ -445,5 +447,4 @@ function main() {
     taojinbi_task();
     toast_console('###***全部任务执行完毕***###')
 }
-
 main()
