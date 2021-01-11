@@ -1,21 +1,17 @@
+"ui";
 auto.waitFor() //等待开启无障碍服务 
 
 //===================用户可编辑参数===================
-var MAX_ALL_TASK_EPOCH = 3 //所有任务重复次数,解决新增任务问题
-var MAX_EPOCH = 101 //浏览任务最大执行次数
-var wait_sec = 15 //任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
-var do_notification_task = 1 //1表示自动执行[开启淘宝通知权限任务],0表示跳过不执行
-var do_dice_task = 1 // 1表示自动执行[淘宝人生掷色子任务]，0表示跳过不执行
-var do_baba_farm_task = 1 // 1表示自动执行[芭芭农场任务]，0表示跳过不执行
-var do_xiaoxiaole_task = 1 // 1表示自动执行[消消乐任务]，0表示跳过不执行
-var do_tianmao_task = 1 //1表示执行[去天猫APP领红包任务]，0表示跳过不执行
-var taojinbi_reg_str = "逛|浏览|聚划算|天猫国际|看" //简单任务主题关键字，若有新的浏览任务出现可在此添加
-var not_taojinbi_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就' //需要在淘金币简单浏览任务中,跳过不执行的主题关键字
-var is_earn_10coin = 1 //是否在逛好店任务中也执行领10金币任务(10s+10金币)  默认执行 1
-var is_collect_shop = 0 //是否在10金币任务中关注商铺(关注商铺+10金币)  默认不执行 0
-var is_show_choice = 1 //是否在启动时,显示特殊任务选择框 默认显示
-var num_ant_find = 32 //在蚂蚁森林执行找能量的次数,0表示直接返回不收取能量,默认32
-
+//所有任务重复次数,解决新增任务问题
+var MAX_ALL_TASK_EPOCH = 2
+//浏览任务最大执行次数
+var MAX_EPOCH = 101
+//任务执行默认等待的时长 考虑到网络卡顿问题 默认15秒
+var wait_sec = 15
+//简单任务主题关键字，若有新的浏览任务出现可在此添加
+var taojinbi_reg_str = "逛|浏览|聚划算|天猫国际|看"
+//需要在淘金币简单浏览任务中,跳过不执行的主题关键字
+var not_taojinbi_reg_str = '农场|消消乐|淘宝人生|逛好店领|小鸡|蚂蚁|淘宝成就'
 
 //===================通用函数=========================
 //点击控件
@@ -158,7 +154,7 @@ function achievement_signin_task() {
 }
 
 //签到领话费充值金
-function signin_phonecharge_task(sec) {
+function haul_wool_task(sec) {
     toast_console('查看-领话费充值金薅羊毛任务')
     if (!assure_click_task('签到领话费充值金|羊毛')) return
     btn_click(text('立即领取').findOne(6000))
@@ -173,41 +169,45 @@ function feed_chick_task() {
     assure_back(); get_rewards()
 }
 
-//蚂蚁森林任务
-function ant_forest_task() {
-    toast_console('查看-蚂蚁森林任务')
-    if (!assure_click_task('蚂蚁森林')) return
-    sleep(2000)
-    let num = 10
-    while (num-- && !text('最新动态').findOne(1000));
-    if (num_ant_find && text('最新动态').findOne(500)) {
-        let img = captureScreen(); console.hide()
+//蚂蚁森林偷取能量
+function steal_energy(num_find) {
+    let num = 5
+    while (num-- && !text('最新动态').findOne(1000)) sleep(500);
+    if (text('最新动态').findOne(500)) {
+        let img = captureScreen();
         let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.25, img.getHeight() * 0.25], threshold: 8 })
-        for (let i = 0; i < num_ant_find; i++) {
+        for (let i = 0; i < num_find; i++) {
             for (let j = 0; j < 12; j++) {
                 if (!cs_click(1, '#b6ff00', 0.1, 0.2, 0.8, 0.5)) break
                 sleep(400)
             }
             click(point.x, point.y); sleep(1500)
             if (!text('最新动态').findOne(1000)) break
-            toast_console('找能量/' + i, true)
+            toast('找能量/' + i)
         }
     }
-    console.show(); assure_back(); get_rewards()
 }
 
-//逛好店并领10金币
-function shop_10coin_task(not_key_reg_str, btn_reg_str) {
+//蚂蚁森林任务
+function ant_forest_task() {
+    toast_console('查看-蚂蚁森林任务')
+    if (!assure_click_task('蚂蚁森林')) return
+    sleep(2000); console.hide(); steal_energy(16); console.show()
+    assure_back(); get_rewards()
+}
+
+//逛好店领10金币
+function browse_goodshop_task(not_key_reg_str, btn_reg_str) {
     toast_console('查看-逛好店并领10金币任务')
     if (!assure_click_task('逛好店领', not_key_reg_str, btn_reg_str)) return
-    for (let i = 0; i < 10 && is_earn_10coin; i++) {
+    for (let i = 0; i < 11 && ui.id_is_earn_10coin.checked; i++) {
         let btn_x = desc('逛10秒+10').findOne(2000)
         toast_console('逛10秒+10金币/' + (i + 1))
         if (!btn_x) break
         btn_x.parent().click(); sleep(12500);
-        if (is_collect_shop) {
+        if (ui.id_is_pat_shop.checked) {
             btn_x = text('关注+10').findOne(800)
-            btn_click(btn_x.parent())
+            if (btn_x) btn_click(btn_x.parent())
         }
         back(); sleep(800);
     }
@@ -272,12 +272,13 @@ function toggle_notification_permission() {
 function notification_permission_task() {
     toast_console('查看-开启通知权限任务');
     if (!assure_click_task('开启通知权限')) return
-    console.hide(); sleep(1000)
+    console.hide();
     toggle_notification_permission()
     app.launch('com.taobao.taobao'); sleep(500)
     assure_back()
     toggle_notification_permission()
-    app.launch('com.taobao.taobao'); sleep(500); console.show()
+    app.launch('com.taobao.taobao'); sleep(500);
+    console.show();
     get_rewards();
 }
 
@@ -336,13 +337,29 @@ function xiaoxiaole_task() {
 }
 
 //天天红包赛
-function exchange_red_envelope_task() {
+function stepnumber_task() {
     toast_console('查看-活力步数兑换红包任务')
     if (!assure_click_task('步数')) return
     if (btn_click(text('去使用').findOne(1000))) {
         swipe(device.width / 2, device.height / 5, device.width / 2, device.height / 2, 500)
     }
     btn_click(textContains('免费领取').findOne(1000)); assure_back(); get_rewards()
+}
+
+//淘金币夺宝任务,需花费100淘金币，但可领取130能量,次日赚了30金币和抽奖机会
+function duobao_task() {
+    toast_console('查看-100淘金币夺宝任务')
+    if (!assure_click_task('淘金币抢')) return
+    btn_position_click(text('立即参与').findOne(3000))
+    btn_click(text('参与兑换抽奖号').findOne(1000))
+    let num = 5
+    while (num--) btn_click(text('-').findOne(1000))
+    btn_click(text('确定兑换').findOne(1000)); sleep(200)
+    btn_click(text('确认兑换').findOne(1000)); sleep(200)
+    btn_click(text('我知道了').findOne(1000)); sleep(200)
+    back(); sleep(1000); back(); sleep(1000);
+    cs_click(3, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true); sleep(500)
+    get_rewards()
 }
 
 //执行简单的浏览任务
@@ -365,6 +382,29 @@ function do_simple_task(epoch, sec, reg_str, not_reg_str, list_task_reg, btn_reg
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true)
         }
         get_rewards()
+    }
+}
+
+//取消关注的店铺
+function cancel_pat_shop() {
+    app.launch('com.taobao.taobao');
+    btn_click(desc('我的淘宝').findOne(5000))
+    btn_position_click(text('关注店铺').findOne(1000))
+    for (let i = 0; i < MAX_EPOCH; i++) {
+        let list_x = className("ImageView").find()
+        for (let i = 0; i < list_x.length; i++) {
+            let btn_x = list_x[i]
+            let h = btn_x.bounds().bottom - btn_x.bounds().top
+            if (h < 10) { //hight较小的控件
+                if (btn_x && btn_x.parent()) {
+                    btn_x.parent().click(); sleep(500)
+                    let bnt_cancel = desc('取消关注').findOne(1000)
+                    if (bnt_cancel) {
+                        btn_click(bnt_cancel.parent()); sleep(1000)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -402,49 +442,130 @@ function taojinbi_task() {
     for (let i = 0; i < MAX_ALL_TASK_EPOCH; i++) {
         toast_console("#第" + (i + 1) + "次执行全任务")
         get_into_taojinbi_task_list(list_task_reg)
-        do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_taojinbi_reg_str, list_task_reg, btn_reg_str)
-        shop_10coin_task(); feed_chick_task()
-        if (do_baba_farm_task) baba_farm_task()
-        if (do_dice_task) dice_task()
-        if (do_tianmao_task) tianmao_task()
-        achievement_signin_task(); signin_phonecharge_task(11)
-        ant_forest_task(); exchange_red_envelope_task()
-        if (do_xiaoxiaole_task) xiaoxiaole_task()
-        if (do_notification_task) notification_permission_task()
+        if (ui.id_do_simple_task.checked) {
+            do_simple_task(MAX_EPOCH, wait_sec, taojinbi_reg_str, not_taojinbi_reg_str, list_task_reg, btn_reg_str)
+        }
+        if (ui.id_do_dice_task.checked) {
+            dice_task()
+        }
+        if (ui.id_do_baba_farm_task.checked) {
+            baba_farm_task()
+        }
+        if (ui.id_do_antforest.checked) {
+            ant_forest_task()
+        }
+        if (ui.id_do_tianmao_task.checked) {
+            tianmao_task()
+        }
+        if (ui.id_do_achievement_task.checked) {
+            achievement_signin_task()
+        }
+        if (ui.id_do_haulwool_task.checked) {
+            haul_wool_task(12)
+        }
+        if (ui.id_do_browse_goog_shop.checked) {
+            browse_goodshop_task();
+        }
+        if (ui.id_do_feedchick_task.checked) {
+            feed_chick_task()
+        }
+        if (ui.id_do_stepnumber_task.checked) {
+            stepnumber_task()
+        }
+        if (ui.id_do_doubao_task.checked) {
+            duobao_task()
+        }
+        if (ui.id_do_notification_task.checked) {
+            notification_permission_task()
+        }
+        if (ui.id_do_xiaoxiaole_task.checked) {
+            xiaoxiaole_task()
+        }
         get_rewards()
     }
     toast_console('*****淘金任务执行完毕*****')
 }
 
-
-function multi_choice() {
-    do_dice_task = do_baba_farm_task = do_xiaoxiaole_task = num_ant_find = do_tianmao_task = do_notification_task = 0
-    let options = dialogs.multiChoice("(作者:Javis486)请选择需要额外执行的任务", ['淘宝人生掷色子任务', '逛农场领免费水果任务', '消消乐任务', '蚂蚁森林任务', '天猫APP领红包任务', '开启淘宝通知权限任务'])
-    options.forEach(option => {
-        switch (option) {
-            case 0:
-                do_dice_task = 1; break;
-            case 1:
-                do_baba_farm_task = 1; break;
-            case 2:
-                do_xiaoxiaole_task = 1; break;
-            case 3:
-                num_ant_find = 32; break;
-            case 4:
-                do_tianmao_task = 1; break;
-            case 5:
-                do_notification_task = 1; break;
-        }
-    });
-}
-
-//主函数
 function main() {
     requestScreenCapture(false);
-    if (is_show_choice) multi_choice();
     console.show();
     console.log('本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi')
     taojinbi_task();
     toast_console('###***全部任务执行完毕***###')
+    exit()
 }
-main()
+
+ui.layout(
+    <vertical >
+        <checkbox text="简单的逛逛浏览任务" id="id_do_simple_task" checked='true' />
+        <checkbox text="淘宝人生掷色子任务" id="id_do_dice_task" checked='true' />
+        <checkbox text="逛农场免费水果任务" id="id_do_baba_farm_task" checked='true' />
+        <checkbox text="支付宝蚂蚁森林任务" id="id_do_antforest" checked='true' />
+        <checkbox text="天猫程序领红包任务" id="id_do_tianmao_task" checked='true' />
+        <checkbox text="薅羊毛话费充值任务" id="id_do_haulwool_task" checked='true' />
+        <checkbox text="淘宝成就的签到任务" id="id_do_achievement_task" checked='true' />
+        <checkbox text="淘宝通知栏权限任务" id="id_do_notification_task" checked='true' />
+        <checkbox text="天天红包赛步数任务" id="id_do_stepnumber_task" checked='true' />
+        <checkbox text="蚂蚁庄园喂小鸡任务" id="id_do_feedchick_task" checked='true' />
+        <checkbox text="100淘金币夺宝任务" id="id_do_doubao_task" checked='true' />
+        <checkbox text="开心砖块消消乐任务" id="id_do_xiaoxiaole_task" checked='true' />
+        <checkbox text="逛好店浏览10秒任务" id="id_do_browse_goog_shop" checked='true' />
+        <horizontal>
+            <checkbox text="额外好店10金币任务" id="id_is_earn_10coin" checked='true' />
+            <checkbox text="收藏店铺10金币任务" id="id_is_pat_shop" checked='true' />
+        </horizontal>
+        <button id="id_task_toggle" text="全部任务开关" />
+        <button id="id_run_main" text="执行选中任务" />
+        <button id="id_zfb_antforest" text="单独执行蚂蚁森林找能量" />
+        <button id="id_cancel_attention" text="取消所有关注的店铺" />
+        <button id="id_exit" text="退出程序" />
+    </vertical>
+);
+
+ui.id_task_toggle.click(function () {
+    ui.id_do_simple_task.checked = !ui.id_do_simple_task.checked
+    ui.id_do_dice_task.checked = !ui.id_do_dice_task.checked
+    ui.id_do_baba_farm_task.checked = !ui.id_do_baba_farm_task.checked
+    ui.id_do_antforest.checked = !ui.id_do_antforest.checked
+    ui.id_do_tianmao_task.checked = !ui.id_do_tianmao_task.checked
+    ui.id_do_achievement_task.checked = !ui.id_do_achievement_task.checked
+    ui.id_do_haulwool_task.checked = !ui.id_do_haulwool_task.checked
+    ui.id_do_browse_goog_shop.checked = !ui.id_do_browse_goog_shop.checked
+    ui.id_is_earn_10coin.checked = !ui.id_is_earn_10coin.checked
+    ui.id_is_pat_shop.checked = !ui.id_is_pat_shop.checked
+    ui.id_do_feedchick_task.checked = !ui.id_do_feedchick_task.checked
+    ui.id_do_stepnumber_task.checked = !ui.id_do_stepnumber_task.checked
+    ui.id_do_notification_task.checked = !ui.id_do_notification_task.checked
+    ui.id_do_doubao_task.checked = !ui.id_do_doubao_task.checked
+    ui.id_do_xiaoxiaole_task.checked = !ui.id_do_xiaoxiaole_task.checked
+})
+
+ui.id_run_main.click(function () {
+    threads.start(function () {
+        main();
+    });
+})
+
+ui.id_exit.click(function () { exit() })
+
+//直接启动支付宝蚂蚁森林偷取好友能量,需添加蚂蚁森林到首页
+ui.id_zfb_antforest.click(function () {
+    threads.start(function () {
+        requestScreenCapture(false);
+        app.launch('com.eg.android.AlipayGphone'); sleep(1000)
+        let btn_ant = textContains('蚂蚁森林').findOne(2000)
+        if (!btn_ant) {
+            toast('无法找到蚂蚁森林,请先添加到支付宝首页'); return
+        }
+        btn_position_click(btn_ant)
+        steal_energy(64)
+        exit()
+    });
+})
+
+ui.id_cancel_attention.click(function () {
+    threads.start(function () {
+        cancel_pat_shop()
+        exit()
+    });
+})
