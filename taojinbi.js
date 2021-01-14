@@ -1,5 +1,9 @@
 "ui";
-auto.waitFor() //等待开启无障碍服务 
+auto() //开启无障碍服务 //auto.waitFor()和"ui";有冲突会导致卡死?
+
+if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
+    floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
+}
 
 //===================用户可编辑参数===================
 //所有任务重复次数,解决新增任务问题
