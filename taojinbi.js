@@ -638,6 +638,9 @@ function do_water_fortune_task_direct() {
     }
     thread = threads.start(function () {
         app.launch('com.taobao.taobao'); sleep(500); console.show()
+        let num = 8;
+        while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
+        btn_position_click(text('年货免费送').findOne(2000)); sleep(1000)
         water_fortune_task(true)
     })
 }
