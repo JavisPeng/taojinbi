@@ -670,7 +670,7 @@ ui.layout(
                             <checkbox text="淘宝通知栏权限任务" id="ck_notification_task" checked='true' />
                             <horizontal>
                                 <checkbox text="年货节浇灌福气任务" id="ck_water_fortune_task" checked='true' />
-                                <checkbox text="执行全部子任务" id="ck_water_fortune_all" checked='false' />
+                                <checkbox text="执行福气全部子任务" id="ck_water_fortune_all" checked='false' />
                             </horizontal>
                             <horizontal>
                                 <checkbox text="逛好店浏览10秒任务" id="ck_browse_goog_shop" checked='true' />
@@ -680,7 +680,6 @@ ui.layout(
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_toogle" text="任务选择开关" />
                             <button id="btn_save_opt" text="保存当前配置" />
-                            <button id="btn_load_opt" text="加载本地配置" />
                             <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
                             <button id="btn_cancel_pat_shop" text="单独执行取消关注的店铺" />
                             <button id="btn_water_fortune" text="单独执行年货节浇灌福气" />
@@ -739,7 +738,6 @@ ui.tabs.setupWithViewPager(ui.viewpager);
 
 ui.btn_toogle.click(task_toggle)
 ui.btn_save_opt.click(save_opt)
-ui.btn_load_opt.click(load_opt)
 ui.btn_antforest.click(zfb_antforest)
 ui.btn_water_fortune.click(do_water_fortune_task_direct)
 ui.btn_cancel_pat_shop.click(cancel_pat_shop)
@@ -754,3 +752,6 @@ ui.btn_run_main.click(function () {
         main(); exit()
     });
 })
+
+//加载本地配置信息
+load_opt()
