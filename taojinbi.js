@@ -425,7 +425,7 @@ function cancel_pat_shop() {
                         btn_x.parent().click(); sleep(500)
                         let bnt_cancel = desc('取消关注').findOne(1000)
                         if (bnt_cancel) {
-                            btn_click(bnt_cancel.parent()); sleep(1000)
+                            btn_click(bnt_cancel.parent()); sleep(700)
                         }
                     }
                 }
@@ -557,7 +557,6 @@ function save_opt() {
 function load_opt() {
     let list_ck_v = storage.get("list_ck", null)
     let list_txt_v = storage.get("list_txt", null)
-    console.log(list_ck_v);
     if (list_ck_v) {
         let list_ck = get_check_box_list();
         for (let i = 0; i < list_ck_v.length; i++) {
@@ -587,7 +586,7 @@ function zfb_antforest() {
     }
     thread = threads.start(function () {
         requestScreenCapture(false);
-        app.launch('com.eg.android.AlipayGphone'); sleep(1000)
+        app.launch('com.eg.android.AlipayGphone'); sleep(2000)
         let btn_ant = textContains('蚂蚁森林').findOne(5000)
         if (!btn_ant) {
             toast_console('无法找到蚂蚁森林,请先添加到支付宝首页', true); return
@@ -600,8 +599,17 @@ function zfb_antforest() {
 //浇灌福气任务
 function water_fortune_task(do_all_task) {
     sleep(2000)
-    let btn_col = text('O1CN01zcJjl31RKdcSSz55H_!!6000000002093-2-tps-126-127.png_400x400Q50s50.jpg_').findOne(3000)
-    btn_click(btn_col);
+    let num = 6, list_btn_col = null
+    while (num--) {
+        list_btn_col = textMatches('.+png_400x400Q50s50.jpg_|.+BgAAAABQABh6FO1AAAAABJRU5ErkJggg==').find()
+        if (list_btn_col.length > 0) break
+        sleep(1000)
+    }
+    if (list_btn_col.length < 1) {
+        toast_console('请先进入活动主界面再运行程序'); return
+    }
+    btn_col = list_btn_col.length > 1 ? list_btn_col[3] : list_btn_col[0]
+    btn_col.click()
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
         click("领取奖励"); click("签到")
@@ -623,7 +631,6 @@ function do_water_fortune_task() {
     sleep(500); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
 
-
 //直接执行浇灌福气任务
 function do_water_fortune_task_direct() {
     if (thread && thread.isAlive()) {
@@ -644,30 +651,39 @@ ui.layout(
             </appbar>
             <viewpager id="viewpager">
                 <frame>
-                    <vertical >
-                        <checkbox text="简单的逛逛浏览任务" id="ck_simple_task" checked='true' />
-                        <checkbox text="蚂蚁庄园喂小鸡任务" id="ck_feedchick_task" checked='true' />
-                        <checkbox text="逛农场免费水果任务" id="ck_baba_farm_task" checked='true' />
-                        <checkbox text="淘宝人生掷骰子任务" id="ck_dice_task" checked='true' />
-                        <checkbox text="薅羊毛话费充值任务" id="ck_haulwool_task" checked='true' />
-                        <checkbox text="天天红包赛步数任务" id="ck_stepnumber_task" checked='true' />
-                        <checkbox text="100淘金币夺宝任务" id="ck_doubao_task" checked='true' />
-                        <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
-                        <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='true' />
-                        <checkbox text="支付宝蚂蚁森林任务" id="ck_antforest" checked='true' />
-                        <checkbox text="开心砖块消消乐任务" id="ck_xiaoxiaole_task" checked='true' />
-                        <checkbox text="淘宝通知栏权限任务" id="ck_notification_task" checked='true' />
-                        <horizontal>
-                            <checkbox text="年货节浇灌福气任务" id="ck_water_fortune_task" checked='true' />
-                            <checkbox text="执行全部子任务" id="ck_water_fortune_all" checked='false' />
-                        </horizontal>
-                        <horizontal>
-                            <checkbox text="逛好店浏览10秒任务" id="ck_browse_goog_shop" checked='true' />
-                            <checkbox text="10秒+10" id="ck_earn_10coin" checked='true' />
-                            <checkbox text="收藏+10" id="ck_pat_shop" checked='true' />
-                        </horizontal>
-                        <button id="btn_run_main" text="执行选中任务" />
-                    </vertical>
+                    <scroll>
+                        <vertical >
+                            <checkbox text="简单的逛逛浏览任务" id="ck_simple_task" checked='true' />
+                            <checkbox text="蚂蚁庄园喂小鸡任务" id="ck_feedchick_task" checked='true' />
+                            <checkbox text="逛农场免费水果任务" id="ck_baba_farm_task" checked='true' />
+                            <checkbox text="淘宝人生掷骰子任务" id="ck_dice_task" checked='true' />
+                            <checkbox text="薅羊毛话费充值任务" id="ck_haulwool_task" checked='true' />
+                            <checkbox text="天天红包赛步数任务" id="ck_stepnumber_task" checked='true' />
+                            <checkbox text="100淘金币夺宝任务" id="ck_doubao_task" checked='true' />
+                            <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
+                            <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='true' />
+                            <checkbox text="支付宝蚂蚁森林任务" id="ck_antforest" checked='true' />
+                            <checkbox text="开心砖块消消乐任务" id="ck_xiaoxiaole_task" checked='true' />
+                            <checkbox text="淘宝通知栏权限任务" id="ck_notification_task" checked='true' />
+                            <horizontal>
+                                <checkbox text="年货节浇灌福气任务" id="ck_water_fortune_task" checked='true' />
+                                <checkbox text="执行全部子任务" id="ck_water_fortune_all" checked='false' />
+                            </horizontal>
+                            <horizontal>
+                                <checkbox text="逛好店浏览10秒任务" id="ck_browse_goog_shop" checked='true' />
+                                <checkbox text="10秒+10" id="ck_earn_10coin" checked='true' />
+                                <checkbox text="收藏+10" id="ck_pat_shop" checked='true' />
+                            </horizontal>
+                            <button id="btn_run_main" text="执行选中任务" />
+                            <button id="btn_toogle" text="任务选择开关" />
+                            <button id="btn_save_opt" text="保存当前配置" />
+                            <button id="btn_load_opt" text="加载本地配置" />
+                            <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
+                            <button id="btn_cancel_pat_shop" text="单独执行取消关注的店铺" />
+                            <button id="btn_water_fortune" text="单独执行年货节浇灌福气" />
+                            <button id="btn_exit" text="退出" />
+                        </vertical>
+                    </scroll>
                 </frame>
                 <frame>
                     <scroll>
@@ -692,17 +708,7 @@ ui.layout(
                         </vertical>
                     </scroll>
                 </frame>
-
             </viewpager>
-        </vertical>
-        <vertical layout_gravity="left" bg="#ffffff" w="280">
-            <img w="280" h="200" scaleType="fitXY" src="http://images.shejidaren.com/wp-content/uploads/2014/10/023746fki.jpg" />
-            <list id="menu">
-                <horizontal bg="?selectableItemBackground" w="*">
-                    <img w="50" h="50" padding="16" src="{{this.icon}}" tint="#009688" />
-                    <text textColor="black" textSize="15sp" text="{{this.title}}" layout_gravity="center" />
-                </horizontal>
-            </list>
         </vertical>
     </drawer>
 );
@@ -728,54 +734,13 @@ ui.viewpager.setTitles(["主界面", "配置界面"]);
 //让滑动页面和标签栏联动
 ui.tabs.setupWithViewPager(ui.viewpager);
 
-//让工具栏左上角可以打开侧拉菜单
-ui.toolbar.setupWithDrawer(ui.drawer);
-
-ui.menu.setDataSource([
-    {
-        title: "任务选择开关",
-        icon: "@drawable/ic_android_black_48dp"
-    },
-    {
-        title: "保存配置",
-        icon: "@drawable/ic_settings_black_48dp"
-    },
-    {
-        title: "加载配置",
-        icon: "@drawable/ic_settings_black_48dp"
-    },
-    {
-        title: "浇灌福气任务",
-        icon: "@drawable/ic_android_black_48dp"
-    },
-    {
-        title: "蚂蚁森林找能量",
-        icon: "@drawable/ic_android_black_48dp"
-    },
-    {
-        title: "取消关注的店铺",
-        icon: "@drawable/ic_favorite_black_48dp"
-    },
-    {
-        title: "退出",
-        icon: "@drawable/ic_exit_to_app_black_48dp"
-    }
-]);
-
-
-ui.menu.on("item_click", item => {
-    switch (item.title) {
-        case '任务选择开关': task_toggle(); break;
-        case '保存配置': save_opt(); break;
-        case '加载配置': load_opt(); break;
-        case '蚂蚁森林找能量': zfb_antforest(); break;
-        case '取消关注的店铺': cancel_pat_shop(); break;
-        case '浇灌福气任务': do_water_fortune_task_direct(); break;
-        case "退出": ui.finish(); break;
-
-
-    }
-})
+ui.btn_toogle.click(task_toggle)
+ui.btn_save_opt.click(save_opt)
+ui.btn_load_opt.click(load_opt)
+ui.btn_antforest.click(zfb_antforest)
+ui.btn_water_fortune.click(do_water_fortune_task_direct)
+ui.btn_cancel_pat_shop.click(cancel_pat_shop)
+ui.btn_exit.click(function () { ui.finish() })
 
 //运行选择项
 ui.btn_run_main.click(function () {
