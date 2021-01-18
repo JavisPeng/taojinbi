@@ -92,7 +92,7 @@ function wait(sec) {
 
 //根据正则表达式获取任务
 function get_task(key_reg_str) {
-    sleep(500); textMatches('每日来访领能量.+').findOne(2000);
+    sleep(500); textMatches('每日来访领能量.+|累计任务奖励').findOne(2000);
     let list_x = textMatches(input_value(ui.txt_btn_reg_str)).find()
     let reg = new RegExp(key_reg_str)
     for (let i = 0; i < list_x.length; i++) {
@@ -212,6 +212,7 @@ function steal_energy(num_find) {
 function ant_forest_task(num, back_reg) {
     toast_console('查看-蚂蚁森林任务')
     if (!assure_click_task(input_value(ui.txt_antforest_reg_str))) return
+    btn_click(text('打开').findOne(1000))
     sleep(2000); console.hide(); steal_energy(num); console.show()
     assure_back(back_reg); get_rewards()
 }
@@ -400,6 +401,7 @@ function do_simple_task(epoch, sec, reg_str, back_reg, do_rewards) {
             back(); btn_position_click(desc('继续退出').findOne(800))
             btn_click(textMatches('残忍离开|回到淘宝|立即领取').findOne(500))
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true)
+            btn_click(text('去领升级奖励').findOne(500)) //年货活动
         }
         if (do_rewards) get_rewards()
     }
@@ -596,19 +598,26 @@ function zfb_antforest() {
     });
 }
 
-//浇灌福气任务
-function water_fortune_task(do_all_task) {
-    sleep(2000)
-    let num = 6, list_btn_col = null
+
+//浇灌福气任务,收集按钮text一直在变
+function get_collection_btn() {
+    let num = 8, list_btn_col = null
     while (num--) {
         list_btn_col = textMatches('.+png_400x400Q50s50.jpg_|.+BgAAAABQABh6FO1AAAAABJRU5ErkJggg==').find()
         if (list_btn_col.length > 0) break
         sleep(1000)
     }
     if (list_btn_col.length < 1) {
-        toast_console('请先进入活动主界面再运行程序'); return
+        toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
     }
-    btn_col = list_btn_col.length > 1 ? list_btn_col[3] : list_btn_col[0]
+    let btn_col = list_btn_col.length > 1 ? list_btn_col[3] : list_btn_col[0]
+    return btn_col
+}
+
+//浇灌福气任务
+function water_fortune_task(do_all_task) {
+    sleep(2000)
+    let btn_col = get_collection_btn()
     btn_col.click()
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
@@ -618,7 +627,7 @@ function water_fortune_task(do_all_task) {
             ant_forest_task(4, back_reg)
         }
         sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
-        btn_col = text('O1CN01zcJjl31RKdcSSz55H_!!6000000002093-2-tps-126-127.png_400x400Q50s50.jpg_').findOne(1000)
+        btn_col = get_collection_btn()
         click(btn_col.bounds().centerX() - device.width / 3, btn_col.bounds().centerY())
     }
 }
@@ -637,10 +646,13 @@ function do_water_fortune_task_direct() {
         toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
     }
     thread = threads.start(function () {
+        requestScreenCapture(false);
         app.launch('com.taobao.taobao'); sleep(500); console.show()
-        let num = 8;
-        while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
-        btn_position_click(text('年货免费送').findOne(2000)); sleep(1000)
+        if (!text('我的家人').findOne(1000)) {
+            let num = 6;
+            while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
+            btn_position_click(text('年货免费送').findOne(2000)); sleep(1000)
+        }
         water_fortune_task(true)
     })
 }
@@ -680,6 +692,7 @@ ui.layout(
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_toogle" text="任务选择开关" />
                             <button id="btn_save_opt" text="保存当前配置" />
+                            <button id="btn_load_opt" text="加载本地配置" />
                             <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
                             <button id="btn_cancel_pat_shop" text="单独执行取消关注的店铺" />
                             <button id="btn_water_fortune" text="单独执行年货节浇灌福气" />
@@ -691,7 +704,7 @@ ui.layout(
                     <scroll>
                         <vertical>
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
-                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览" /></horizontal>
+                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="浏览庄园立得" /></horizontal>
@@ -739,6 +752,7 @@ ui.tabs.setupWithViewPager(ui.viewpager);
 ui.btn_toogle.click(task_toggle)
 ui.btn_save_opt.click(save_opt)
 ui.btn_antforest.click(zfb_antforest)
+ui.btn_load_opt.click(load_opt)
 ui.btn_water_fortune.click(do_water_fortune_task_direct)
 ui.btn_cancel_pat_shop.click(cancel_pat_shop)
 ui.btn_exit.click(function () { ui.finish() })
@@ -752,6 +766,3 @@ ui.btn_run_main.click(function () {
         main(); exit()
     });
 })
-
-//加载本地配置信息
-load_opt()
