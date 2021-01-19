@@ -259,7 +259,7 @@ function dice_task() {
     cs_click(4, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)')
-    cs_click(2, '#fee998', 0.3, 0.2, 0.4, 0.4);
+    cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
     //橙色收下奖励按钮按钮
     toast_console('掷骰子任务-点击5次开心收下按钮(一点都不开心- -)')
     for (let i = 0; i < 5; i++) {
@@ -610,13 +610,20 @@ function get_collection_btn() {
     if (list_btn_col.length < 1) {
         toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
     }
-    let btn_col = list_btn_col.length > 1 ? list_btn_col[3] : list_btn_col[0]
+    if (list_btn_col.length == 1)
+        return list_btn_col[0]
+    for (let i = 0; i < list_btn_col.length; i++) {
+        let x = list_btn_col[i]
+        if (x.bounds().left / device.width > 0.78 && x.bounds().top / device.height > 0.64) {
+            return x
+        }
+    }
     return btn_col
 }
 
 //浇灌福气任务
 function water_fortune_task(do_all_task) {
-    sleep(2000)
+    sleep(2000); btn_click(text('继续努力').findOne(2000))
     let btn_col = get_collection_btn()
     btn_col.click()
     let back_reg = '累计任务奖励'; sleep(800)
@@ -625,6 +632,7 @@ function water_fortune_task(do_all_task) {
         if (do_all_task) {
             do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
             ant_forest_task(4, back_reg)
+            xiaoxiaole_task()
         }
         sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
         btn_col = get_collection_btn()
@@ -704,7 +712,7 @@ ui.layout(
                     <scroll>
                         <vertical>
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
-                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛" /></horizontal>
+                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="浏览庄园立得" /></horizontal>
@@ -717,7 +725,7 @@ ui.layout(
                             <horizontal><text text="淘宝成就签到任务关键字:" /> <input id="txt_achievement_task_reg_str" text="满150点成就" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
                             <horizontal><text text="天猫领红包任务关键字:" /> <input id="txt_tianmao_task_reg_str" text="去天猫APP领红包" /></horizontal>
-                            <horizontal><text text="开心消消乐任务关键字:" /> <input id="txt_xiaoxiaole_task_reg_str" text="消除3次得" /></horizontal>
+                            <horizontal><text text="开心消消乐任务关键字:" /> <input id="txt_xiaoxiaole_task_reg_str" text="消除" /></horizontal>
                             <horizontal><text text="淘宝通权限任务关键字:" /> <input id="txt_notification_task_reg_str" text="开启通知权限" /></horizontal>
                             <horizontal><text text="年货节浇灌福气任务:" /> <input id="txt_water_fortune_task_reg_str" text="浇灌福气" /></horizontal>
                         </vertical>
