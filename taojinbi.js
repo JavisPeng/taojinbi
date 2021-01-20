@@ -498,14 +498,14 @@ function taojinbi_task() {
         if (ui.ck_doubao_task.checked) {
             duobao_task()
         }
-        if (ui.ck_stepnumber_task.checked) {
-            stepnumber_task()
-        }
         if (ui.ck_tianmao_task.checked) {
             tianmao_task()
         }
         if (ui.ck_notification_task.checked) {
             notification_permission_task()
+        }
+        if (ui.ck_stepnumber_task.checked) {
+            stepnumber_task()
         }
         if (ui.ck_xiaoxiaole_task.checked) {
             xiaoxiaole_task()
@@ -630,9 +630,11 @@ function water_fortune_task(do_all_task) {
     if (text(back_reg).findOne(1000)) {
         click("领取奖励"); click("签到")
         if (do_all_task) {
-            do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
-            ant_forest_task(4, back_reg)
-            xiaoxiaole_task()
+            for (let i = 0; i < 2; i++) {
+                do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
+                ant_forest_task(4, back_reg)
+                xiaoxiaole_task()
+            }
         }
         sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
         btn_col = get_collection_btn()
@@ -720,7 +722,7 @@ ui.layout(
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
                             <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="掷骰子立得" /></horizontal>
                             <horizontal><text text="薅羊毛充话费关键字:" /> <input id="txt_haulwool_task_reg_str" text="签到领话费" /></horizontal>
-                            <horizontal><text text="天天红包步数任务关键字:" /> <input id="txt_stepnumber_task_reg_str" text="步数打卡" /></horizontal>
+                            <horizontal><text text="天天红包步数任务关键字:" /> <input id="txt_stepnumber_task_reg_str" text="步" /></horizontal>
                             <horizontal><text text="100淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
                             <horizontal><text text="淘宝成就签到任务关键字:" /> <input id="txt_achievement_task_reg_str" text="满150点成就" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
