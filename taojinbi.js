@@ -59,7 +59,7 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
             }
             return click(point.x, point.y);
         }
-        sleep(1000)
+        if (num) sleep(1000)
     }
     return false
 }
@@ -368,7 +368,7 @@ function stepnumber_task() {
 }
 
 //淘金币夺宝任务,需花费100淘金币
-function duobao_task() {
+function duobao_task(back_reg) {
     toast_console('查看-100淘金币夺宝任务')
     if (!assure_click_task(input_value(ui.txt_doubao_task_reg_str))) return
     btn_assure_click(text('立即参与').findOne(3000))
@@ -378,8 +378,10 @@ function duobao_task() {
     btn_click(text('确定兑换').findOne(1000)); sleep(200)
     btn_click(text('确认兑换').findOne(1000)); sleep(200)
     btn_click(text('我知道了').findOne(1000)); sleep(1000)
-    back(); sleep(1000); back(); sleep(1000);
-    cs_click(3, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true); sleep(500)
+    num = 8
+    while (num-- && !text(back_reg).findOne(1000)) {
+        back(); sleep(500); cs_click(1, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true); sleep(200);
+    }
     get_rewards()
 }
 
@@ -400,7 +402,8 @@ function do_simple_task(epoch, sec, reg_str, back_reg, do_rewards) {
         while (num-- && !text(back_reg).findOne(1000)) {
             back(); btn_position_click(desc('继续退出').findOne(800))
             btn_click(textMatches('残忍离开|回到淘宝|立即领取').findOne(500))
-            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true)
+            //if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true) //v9.18.0  ok?
+            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true) //v9.18.0  ok?
             btn_click(text('去领升级奖励').findOne(500)) //年货活动
         }
         if (do_rewards) get_rewards()
@@ -464,11 +467,12 @@ function get_into_taojinbi_task_list() {
 
 
 function taojinbi_task() {
+    let simple_task_reg_str = input_value(ui.txt_simple_task_reg_str)
+    let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
     for (let i = 0; i < MAX_ALL_TASK_EPOCH; i++) {
         toast_console("#第" + (i + 1) + "次执行全任务")
         get_into_taojinbi_task_list()
         if (ui.ck_simple_task.checked) {
-            let simple_task_reg_str = input_value(ui.txt_simple_task_reg_str), task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
             do_simple_task(MAX_EPOCH, wait_sec, simple_task_reg_str, task_list_ui_reg, true)
         }
         if (ui.ck_feedchick_task.checked) {
@@ -496,7 +500,7 @@ function taojinbi_task() {
             haul_wool_task(12)
         }
         if (ui.ck_doubao_task.checked) {
-            duobao_task()
+            duobao_task(task_list_ui_reg)
         }
         if (ui.ck_tianmao_task.checked) {
             tianmao_task()
@@ -601,13 +605,14 @@ function zfb_antforest() {
 
 //浇灌福气任务,收集按钮text一直在变
 function get_collection_btn() {
-    let num = 8, list_btn_col = null
+    let num = 6, list_btn_col = null
     while (num--) {
+        click('继续努力')
         list_btn_col = textMatches('.+png_400x400Q50s50.jpg_|.+BgAAAABQABh6FO1AAAAABJRU5ErkJggg==').find()
         if (list_btn_col.length > 0) break
         sleep(1000)
     }
-    if (list_btn_col.length < 1) {
+    if (!list_btn_col || list_btn_col.length < 1) {
         toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
     }
     if (list_btn_col.length == 1)
@@ -623,7 +628,7 @@ function get_collection_btn() {
 
 //浇灌福气任务
 function water_fortune_task(do_all_task) {
-    sleep(2000); btn_click(text('继续努力').findOne(2000))
+    sleep(2000);
     let btn_col = get_collection_btn()
     btn_col.click()
     let back_reg = '累计任务奖励'; sleep(800)
