@@ -310,14 +310,16 @@ function notification_permission_task() {
 function xiaoxiaole_task() {
     toast_console('查看-消消乐任务')
     if (!assure_click_task(input_value(ui.txt_xiaoxiaole_task_reg_str))) return
-    console.hide(); sleep(8000)
+    console.hide(); sleep(6000)
     //开心收下奖励
-    cs_click(4, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
+    cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
     //回到主页
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
         back(); sleep(1000)
-        if (cs_click(2, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break
+        if (cs_click(1, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break //橙色返回
+        if (cs_click(1, '#965417', 0.2, 0.2, 0.6, 0.6, true)) break //咖啡色暂时返回
     }
+    console.log("回到主页了么???");
     sleep(3000) //过渡动画
     //邮件领取 pass
     cs_click(3, '#ffffff', 0.65, 0.15, 0.3, 0.5); sleep(500)
@@ -330,9 +332,10 @@ function xiaoxiaole_task() {
     //消除方块,兼容不同机型
     let rgb = '#fff0e0'
     img = captureScreen()
-    let point1 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.2, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
+    let point1 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
     img = images.rotate(img, 180)
-    let point2 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.2, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
+    let point2 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
+    
     if (point1 && point2) {
         let box_x = (img.getWidth() - point2.x - point1.x) / 5
         let box_y = (img.getHeight() - point2.y - point1.y) / 6
@@ -378,10 +381,7 @@ function duobao_task(back_reg) {
     btn_click(text('确定兑换').findOne(1000)); sleep(200)
     btn_click(text('确认兑换').findOne(1000)); sleep(200)
     btn_click(text('我知道了').findOne(1000)); sleep(1000)
-    num = 8
-    while (num-- && !text(back_reg).findOne(1000)) {
-        back(); sleep(500); cs_click(1, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true); sleep(200);
-    }
+    back(); sleep(800); back(); sleep(1000); cs_click(3, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
     get_rewards()
 }
 
@@ -452,7 +452,7 @@ function get_into_taojinbi_task_list() {
             toast_console('无法返回到淘宝主界面,请手动回到淘宝主界面后重新运行'); exit()
         }
         btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 6; i++) {
             btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
             btn_x = text('赚金币').findOne(1000)
             if (btn_x) break
@@ -522,7 +522,7 @@ function taojinbi_task() {
 function main() {
     requestScreenCapture(false);
     console.show();
-    console.log('本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi')
+    console.log("淘金币" + storage.get('taojinbi_version', '') + " 本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi")
     taojinbi_task();
     toast_console('###***全部任务执行完毕***###')
 }
@@ -607,7 +607,7 @@ function zfb_antforest() {
 function get_collection_btn() {
     let num = 6, list_btn_col = null
     while (num--) {
-        click('继续努力')
+        btn_click(text('继续努力').findOne(300))
         list_btn_col = textMatches('.+png_400x400Q50s50.jpg_|.+BgAAAABQABh6FO1AAAAABJRU5ErkJggg==').find()
         if (list_btn_col.length > 0) break
         sleep(1000)
@@ -623,14 +623,14 @@ function get_collection_btn() {
             return x
         }
     }
-    return btn_col
+    return null
 }
 
 //浇灌福气任务
 function water_fortune_task(do_all_task) {
     sleep(2000);
     let btn_col = get_collection_btn()
-    btn_col.click()
+    btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
         click("领取奖励"); click("签到")
@@ -696,7 +696,7 @@ ui.layout(
                             <checkbox text="开心砖块消消乐任务" id="ck_xiaoxiaole_task" checked='true' />
                             <checkbox text="淘宝通知栏权限任务" id="ck_notification_task" checked='true' />
                             <horizontal>
-                                <checkbox text="年货节浇灌福气任务" id="ck_water_fortune_task" checked='true' />
+                                <checkbox text="年货节浇灌福气任务" id="ck_water_fortune_task" checked='false' />
                                 <checkbox text="执行福气全部子任务" id="ck_water_fortune_all" checked='false' />
                             </horizontal>
                             <horizontal>
@@ -752,7 +752,7 @@ ui.emitter.on("create_options_menu", menu => {
 ui.emitter.on("options_item_selected", (e, item) => {
     switch (item.getTitle()) {
         case "关于":
-            alert("关于", "本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi");
+            alert("关于", "淘金币" + storage.get('taojinbi_version', '') + " 本APP完全免费，作者:Javis486，github下载地址：https://github.com/JavisPeng/taojinbi");
             break;
     }
     e.consumed = true;
