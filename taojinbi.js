@@ -262,28 +262,28 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生逛街领能量掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
-    sleep(8000)
+    console.hide(); sleep(8000);
     //去他大爷的神秘礼物
-    toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)')
-    cs_click(4, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
+    toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
+    cs_click(3, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
     //单击礼包
-    toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)')
+    toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
     //橙色收下奖励按钮按钮
-    toast_console('掷骰子任务-点击5次开心收下按钮(一点都不开心- -)')
+    toast_console('掷骰子任务-点击5次开心收下按钮(一点都不开心- -)', true)
     for (let i = 0; i < 5; i++) {
         cs_click(1, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true); sleep(500)
     }
     sleep(1000)
     //金色前进按钮
-    toast_console('掷骰子任务-尝试点击色子前进')
+    toast_console('掷骰子任务-尝试点击色子前进', true)
     cs_click(4, '#fff89d', 0.2, 0.5, 0.45, 0.3); sleep(3000)
     //橙色收下奖励按钮按钮
     cs_click(2, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true);
     back(); sleep(1000)
     //橙色返回淘宝按钮
     cs_click(3, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true)
-    btn_click(text('立刻离开').findOne(1000)); get_rewards()
+    btn_click(text('立刻离开').findOne(1000)); get_rewards(); console.show()
 }
 
 //关闭/开启淘宝通知
@@ -319,7 +319,7 @@ function notification_permission_task() {
 function xiaoxiaole_task() {
     toast_console('查看-消消乐任务')
     if (!assure_click_task(input_value(ui.txt_xiaoxiaole_task_reg_str))) return
-    console.hide(); sleep(6000)
+    console.hide(); sleep(10000)
     //开心收下奖励
     cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
     //回到主页
@@ -328,7 +328,7 @@ function xiaoxiaole_task() {
         if (cs_click(1, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break //橙色返回
         if (cs_click(1, '#965417', 0.2, 0.2, 0.6, 0.6, true)) break //咖啡色暂时返回
     }
-    console.log("回到主页了么???");
+    toast_console("回到主页了么?", true);
     sleep(3000) //过渡动画
     //邮件领取 pass
     cs_click(3, '#ffffff', 0.65, 0.15, 0.3, 0.5); sleep(500)
@@ -610,7 +610,6 @@ function zfb_antforest() {
         steal_energy(64);
     });
 }
-
 
 //浇灌福气任务,收集按钮text一直在变
 function get_collection_btn() {
