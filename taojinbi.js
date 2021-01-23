@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 //auto.waitFor()和"ui";有冲突会导致卡死?
+auto() //开启无障碍服务 v1.5.6
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -192,20 +192,29 @@ function feed_chick_task() {
 //蚂蚁森林偷取能量
 function steal_energy(num_find) {
     let num = 5
-    while (num-- && !text('最新动态').findOne(1000)) sleep(500);
-    if (text('最新动态').findOne(500)) {
-        let img = captureScreen();
-        let point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.25, img.getHeight() * 0.25], threshold: 8 })
-        for (let i = 0; i < num_find; i++) {
+    while (num-- && !textMatches('.+动态').findOne(1000)) sleep(500);
+    if (textMatches('.+动态').findOne(500)) {
+        let point = null; num = 5
+        while (num--) {
+            let img = captureScreen();
+            point = findColor(img, '#ff6e01', { region: [img.getWidth() * 0.7, img.getHeight() * 0.6, img.getWidth() * 0.25, img.getHeight() * 0.25], threshold: 8 })
+            if (point) break
+            sleep(1000)
+        }
+        if (!point) {
+            toast('找能量按钮去哪了?'); exit()
+        }
+        for (let i = 1; i < num_find; i++) {
             for (let j = 0; j < 12; j++) {
                 if (!cs_click(1, '#b6ff00', 0.1, 0.2, 0.8, 0.4)) break
                 sleep(400)
             }
             click(point.x, point.y); sleep(1500)
-            if (!text('最新动态').findOne(1000)) break
+            if (!textMatches('.+动态').findOne(1000)) break
             toast('找能量/' + i)
         }
     }
+    toast('找能量执行完毕')
 }
 
 //蚂蚁森林任务
@@ -335,7 +344,7 @@ function xiaoxiaole_task() {
     let point1 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
     img = images.rotate(img, 180)
     let point2 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
-    
+
     if (point1 && point2) {
         let box_x = (img.getWidth() - point2.x - point1.x) / 5
         let box_y = (img.getHeight() - point2.y - point1.y) / 6
@@ -381,7 +390,7 @@ function duobao_task(back_reg) {
     btn_click(text('确定兑换').findOne(1000)); sleep(200)
     btn_click(text('确认兑换').findOne(1000)); sleep(200)
     btn_click(text('我知道了').findOne(1000)); sleep(1000)
-    back(); sleep(800); back(); sleep(1000); cs_click(3, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
+    back(); sleep(1000); back(); sleep(1000); cs_click(4, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
     get_rewards()
 }
 
@@ -402,10 +411,10 @@ function do_simple_task(epoch, sec, reg_str, back_reg, do_rewards) {
         while (num-- && !text(back_reg).findOne(1000)) {
             back(); btn_position_click(desc('继续退出').findOne(800))
             btn_click(textMatches('残忍离开|回到淘宝|立即领取').findOne(500))
-            //if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff7d44', 0.2, 0.2, 0.4, 0.4, true) //v9.18.0  ok?
-            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true) //v9.18.0  ok?
+            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
             btn_click(text('去领升级奖励').findOne(500)) //年货活动
         }
+        click("领取奖励"); click("签到") ////////for浇灌福气
         if (do_rewards) get_rewards()
     }
 }
@@ -607,13 +616,12 @@ function zfb_antforest() {
 function get_collection_btn() {
     let num = 6, list_btn_col = null
     while (num--) {
-        btn_click(text('继续努力').findOne(300))
         list_btn_col = textMatches('.+png_400x400Q50s50.jpg_|.+BgAAAABQABh6FO1AAAAABJRU5ErkJggg==').find()
         if (list_btn_col.length > 0) break
         sleep(1000)
     }
     if (!list_btn_col || list_btn_col.length < 1) {
-        toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
+        toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); return null
     }
     if (list_btn_col.length == 1)
         return list_btn_col[0]
@@ -629,11 +637,11 @@ function get_collection_btn() {
 //浇灌福气任务
 function water_fortune_task(do_all_task) {
     sleep(2000);
+    btn_click(text('继续努力').findOne(3000))
     let btn_col = get_collection_btn()
     btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
-        click("领取奖励"); click("签到")
         if (do_all_task) {
             for (let i = 0; i < 2; i++) {
                 do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
@@ -643,7 +651,9 @@ function water_fortune_task(do_all_task) {
         }
         sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
         btn_col = get_collection_btn()
-        click(btn_col.bounds().centerX() - device.width / 3, btn_col.bounds().centerY())
+        if (btn_col) {
+            click(btn_col.bounds().centerX() - device.width / 3, btn_col.bounds().centerY())
+        }
     }
 }
 
