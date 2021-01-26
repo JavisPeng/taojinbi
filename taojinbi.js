@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.5.6
+auto() //开启无障碍服务 v1.5.7
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -135,7 +135,7 @@ function assure_back(tag) {
     let num = 8
     while (num-- && !text(tag).findOne(1000)) {
         back()
-        btn_click(text("残忍离开").findOne(500))
+        btn_click(textMatches("残忍离开|立即领取").findOne(200))
     }
 }
 
@@ -177,6 +177,7 @@ function achievement_signin_task() {
 function haul_wool_task(sec) {
     toast_console('查看-领话费充值金薅羊毛任务')
     if (!assure_click_task(input_value(ui.txt_haulwool_task_reg_str))) return
+    //sleep(2000); text('TB17KscZhv1gK0jSZFFXXb0sXXa-640-128').findOne(6000)
     btn_click(text('立即领取').findOne(6000))
     sleep(sec * 1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
@@ -265,7 +266,7 @@ function dice_task() {
     console.hide(); sleep(8000);
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
-    cs_click(3, '#ffffff', 0.3, 0.1, 0.3, 0.5, true);
+    cs_click(5, '#ffffff', 0.3, 0.1, 0.7, 0.5, true);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
@@ -344,7 +345,6 @@ function xiaoxiaole_task() {
     let point1 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
     img = images.rotate(img, 180)
     let point2 = findColor(img, rgb, { region: [img.getWidth() * 0.2, img.getHeight() * 0.3, img.getWidth() * 0.4, img.getHeight() * 0.4], threshold: 4 })
-
     if (point1 && point2) {
         let box_x = (img.getWidth() - point2.x - point1.x) / 5
         let box_y = (img.getHeight() - point2.y - point1.y) / 6
@@ -375,7 +375,7 @@ function stepnumber_task() {
     if (btn_click(text('去使用').findOne(1000))) {
         swipe(device.width / 2, device.height / 5, device.width / 2, device.height / 2, 500)
     }
-    btn_click(textContains('免费领取').findOne(1000)); sleep(2000);
+    btn_click(textContains('免费领取').findOne(5000)); sleep(1000);
     assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
 
@@ -410,12 +410,14 @@ function do_simple_task(epoch, sec, reg_str, back_reg, do_rewards) {
         let num = 8
         while (num-- && !text(back_reg).findOne(1000)) {
             back(); btn_position_click(desc('继续退出').findOne(800))
-            btn_click(textMatches('残忍离开|回到淘宝|立即领取').findOne(500))
+            btn_click(textMatches('残忍离开|回到淘宝').findOne(500))
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
-            btn_click(text('去领升级奖励').findOne(500)) //年货活动
+            btn_click(text('去领升级奖励').findOne(500)) ////////for浇灌福气
         }
-        click("领取奖励"); click("签到") ////////for浇灌福气
         if (do_rewards) get_rewards()
+        else {
+            click("领取奖励");  ////////for浇灌福气
+        }
     }
 }
 
@@ -634,13 +636,14 @@ function get_collection_btn() {
 }
 
 //浇灌福气任务
-function water_fortune_task(do_all_task) {
+function water_fortune_task(do_all_task, water_once) {
     sleep(2000);
     btn_click(text('继续努力').findOne(3000))
     let btn_col = get_collection_btn()
     btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
+        btn_click(text("签到").findOne(1000))
         if (do_all_task) {
             for (let i = 0; i < 2; i++) {
                 do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
@@ -648,10 +651,12 @@ function water_fortune_task(do_all_task) {
                 xiaoxiaole_task()
             }
         }
-        sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
-        btn_col = get_collection_btn()
-        if (btn_col) {
-            click(btn_col.bounds().centerX() - device.width / 3, btn_col.bounds().centerY())
+        if (water_once) {
+            sleep(500); btn_click(text('关闭').findOne(2000)); sleep(1000);
+            btn_col = get_collection_btn()
+            if (btn_col) {
+                click(btn_col.bounds().centerX() - device.width / 3, btn_col.bounds().centerY())
+            }
         }
     }
 }
@@ -660,7 +665,7 @@ function water_fortune_task(do_all_task) {
 function do_water_fortune_task() {
     toast_console('查看-浇灌福气任务任务')
     if (!assure_click_task(input_value(ui.txt_water_fortune_task_reg_str))) return
-    water_fortune_task(ui.ck_water_fortune_all.checked)
+    water_fortune_task(ui.ck_water_fortune_all.checked, true)
     sleep(500); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
 
@@ -677,7 +682,7 @@ function do_water_fortune_task_direct() {
             while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
             btn_position_click(text('年货免费送').findOne(2000)); sleep(1000)
         }
-        water_fortune_task(true)
+        water_fortune_task(true, false)
     })
 }
 
