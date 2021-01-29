@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.5.7
+auto() //开启无障碍服务 v1.5.8
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -383,6 +383,9 @@ function stepnumber_task() {
 function duobao_task(back_reg) {
     toast_console('查看-100淘金币夺宝任务')
     if (!assure_click_task(input_value(ui.txt_doubao_task_reg_str))) return
+    if(btn_assure_click(text('去“我的奖品”查看').findOne(3000))){
+        swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.2, 500)
+    }
     btn_assure_click(text('立即参与').findOne(3000))
     btn_click(text('参与兑换抽奖号').findOne(3000))
     let num = 5
@@ -412,11 +415,11 @@ function do_simple_task(epoch, sec, reg_str, back_reg, do_rewards) {
             back(); btn_position_click(desc('继续退出').findOne(800))
             btn_click(textMatches('残忍离开|回到淘宝').findOne(500))
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
-            btn_click(text('去领升级奖励').findOne(500)) ////////for浇灌福气
+            btn_click(text('去领升级奖励').findOne(500)) ///////for浇灌福气
         }
         if (do_rewards) get_rewards()
         else {
-            click("领取奖励");  ////////for浇灌福气
+            click("领取奖励");  ////////////for浇灌福气
         }
     }
 }
@@ -428,9 +431,8 @@ function cancel_pat_shop() {
     }
     thread = threads.start(function () {
         app.launch('com.taobao.taobao');
-        let num = 8;
-        while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
-        btn_position_click(text('关注店铺').findOne(2000)); sleep(1000)
+        toast('单击我的淘宝'); btn_assure_click(desc('我的淘宝').findOne(6000))
+        toast('点击关注店铺'); btn_assure_click(desc('关注店铺').findOne(2000)); sleep(1000)
         for (let i = 0; i < MAX_EPOCH; i++) {
             let list_x = className("ImageView").find()
             for (let i = 0; i < list_x.length; i++) {
@@ -441,7 +443,7 @@ function cancel_pat_shop() {
                         btn_x.parent().click(); sleep(500)
                         let bnt_cancel = desc('取消关注').findOne(1000)
                         if (bnt_cancel) {
-                            btn_click(bnt_cancel.parent()); sleep(700)
+                            btn_click(bnt_cancel.parent()); sleep(500)
                         }
                     }
                 }
@@ -622,7 +624,7 @@ function get_collection_btn() {
         sleep(1000)
     }
     if (!list_btn_col || list_btn_col.length < 1) {
-        toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); return null
+        toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
     }
     if (list_btn_col.length == 1)
         return list_btn_col[0]
@@ -632,21 +634,21 @@ function get_collection_btn() {
             return x
         }
     }
-    return null
+    toast_console('无法找到集福气按钮,请先进入活动主界面再运行程序'); exit()
 }
 
 //浇灌福气任务
 function water_fortune_task(do_all_task, water_once) {
-    sleep(2000);
-    btn_click(text('继续努力').findOne(3000))
+    sleep(2000); btn_click(text('继续努力').findOne(2000))
     let btn_col = get_collection_btn()
+    click(btn_col.bounds().left, btn_col.bounds().top - btn_col.bounds().height()) //次日领取
     btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
         btn_click(text("签到").findOne(1000))
         if (do_all_task) {
             for (let i = 0; i < 2; i++) {
-                do_simple_task(MAX_EPOCH, 18, "浏览1", back_reg, false)
+                do_simple_task(MAX_EPOCH, 18, "浏览", back_reg, false)
                 ant_forest_task(4, back_reg)
                 xiaoxiaole_task()
             }
@@ -793,5 +795,5 @@ ui.btn_run_main.click(function () {
     }
     thread = threads.start(function () {
         main(); exit()
-    });
+    })
 })
