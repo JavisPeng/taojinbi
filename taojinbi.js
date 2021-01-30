@@ -641,7 +641,7 @@ function get_collection_btn() {
 function water_fortune_task(do_all_task, water_once) {
     sleep(2000); btn_click(text('继续努力').findOne(2000))
     let btn_col = get_collection_btn()
-    click(btn_col.bounds().left, btn_col.bounds().top - btn_col.bounds().height()) //次日领取
+    click(btn_col.bounds().left, btn_col.bounds().top - 2*btn_col.bounds().height()) //次日领取
     btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
