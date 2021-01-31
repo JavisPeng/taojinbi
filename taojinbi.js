@@ -1,6 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.5.8
-
+auto() //开启无障碍服务 v1.5.9
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
 }
@@ -145,6 +144,7 @@ function baba_farm_task() {
     if (!assure_click_task(input_value(ui.txt_baba_farm_task_reg_str))) return
     sleep(6000)
     //金色获取肥料按钮
+    btn_click(text('继续努力').findOne(1000))
     cs_click(6, '#fed362', 0.5, 0.45, 0.45, 0.25)
     sleep(1000); btn_position_click(text('去施肥，赚更多肥料').findOne(1000)); sleep(500)
     //签到列表领肥料
@@ -383,7 +383,7 @@ function stepnumber_task() {
 function duobao_task(back_reg) {
     toast_console('查看-100淘金币夺宝任务')
     if (!assure_click_task(input_value(ui.txt_doubao_task_reg_str))) return
-    if(btn_assure_click(text('去“我的奖品”查看').findOne(3000))){
+    if (btn_assure_click(text('去“我的奖品”查看').findOne(3000))) {
         swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.2, 500)
     }
     btn_assure_click(text('立即参与').findOne(3000))
@@ -393,7 +393,7 @@ function duobao_task(back_reg) {
     btn_click(text('确定兑换').findOne(1000)); sleep(200)
     btn_click(text('确认兑换').findOne(1000)); sleep(200)
     btn_click(text('我知道了').findOne(1000)); sleep(1000)
-    back(); sleep(1000); back(); sleep(1000); cs_click(4, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
+    back(); sleep(800); back(); sleep(800); back(); sleep(800); cs_click(4, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
     get_rewards()
 }
 
@@ -641,7 +641,7 @@ function get_collection_btn() {
 function water_fortune_task(do_all_task, water_once) {
     sleep(2000); btn_click(text('继续努力').findOne(2000))
     let btn_col = get_collection_btn()
-    click(btn_col.bounds().left, btn_col.bounds().top - 2*btn_col.bounds().height()) //次日领取
+    click(btn_col.bounds().left, btn_col.bounds().top - 2 * btn_col.bounds().height()) //次日领取
     btn_click(btn_col)
     let back_reg = '累计任务奖励'; sleep(800)
     if (text(back_reg).findOne(1000)) {
@@ -705,7 +705,7 @@ ui.layout(
                             <checkbox text="淘宝人生掷骰子任务" id="ck_dice_task" checked='true' />
                             <checkbox text="薅羊毛话费充值任务" id="ck_haulwool_task" checked='true' />
                             <checkbox text="天天红包赛步数任务" id="ck_stepnumber_task" checked='true' />
-                            <checkbox text="100淘金币夺宝任务" id="ck_doubao_task" checked='true' />
+                            <checkbox text="200淘金币夺宝任务" id="ck_doubao_task" checked='true' />
                             <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
                             <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='true' />
                             <checkbox text="支付宝蚂蚁森林任务" id="ck_antforest" checked='true' />
@@ -744,7 +744,7 @@ ui.layout(
                             <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="掷骰子立得" /></horizontal>
                             <horizontal><text text="薅羊毛充话费关键字:" /> <input id="txt_haulwool_task_reg_str" text="签到领话费" /></horizontal>
                             <horizontal><text text="天天红包步数任务关键字:" /> <input id="txt_stepnumber_task_reg_str" text="步" /></horizontal>
-                            <horizontal><text text="100淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
+                            <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
                             <horizontal><text text="淘宝成就签到任务关键字:" /> <input id="txt_achievement_task_reg_str" text="满150点成就" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
                             <horizontal><text text="天猫领红包任务关键字:" /> <input id="txt_tianmao_task_reg_str" text="去天猫APP领红包" /></horizontal>
