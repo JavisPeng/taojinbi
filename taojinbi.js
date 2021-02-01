@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.5.9
+auto() //开启无障碍服务 v1.5.10
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
 }
@@ -678,18 +678,18 @@ function do_water_fortune_task_direct() {
     }
     thread = threads.start(function () {
         requestScreenCapture(false);
-        app.launch('com.taobao.taobao'); sleep(500); console.show()
+        app.launch('com.taobao.taobao'); sleep(500);
         if (!text('我的家人').findOne(1000)) {
             let num = 6;
             while (num-- && btn_click(desc('我的淘宝').findOne(1000)));
-            btn_position_click(text('年货免费送').findOne(2000)); sleep(1000)
+            btn_position_click(text('免费水果包邮送').findOne(2000)); console.show(); sleep(1000)
         }
         water_fortune_task(true, false)
     })
 }
 
 ui.layout(
-    <drawer id="drawer">
+    <drawer id="drawer">\
         <vertical>
             <appbar>
                 <toolbar id="toolbar" title="淘金币486" />
