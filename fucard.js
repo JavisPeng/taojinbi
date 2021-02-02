@@ -29,6 +29,7 @@ function get_code(pre_code) {
 }
 
 function fucard_from_code() {
+    app.launch('com.eg.android.AlipayGphone'); sleep(2000);
     btn_position_click(text('我的').findOne(1000))
     let my_name = idContains('name').findOne(2000).text()
     btn_position_click(text('消息').findOne(1000)); sleep(1000)
