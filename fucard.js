@@ -30,14 +30,14 @@ function get_code(pre_code) {
 
 function fucard_from_code() {
     app.launch('com.eg.android.AlipayGphone'); sleep(2000);
-    btn_position_click(text('我的').findOne(1000))
+    btn_position_click(text('我的').findOne(2000))
     let my_name = idContains('name').findOne(2000).text()
-    btn_position_click(text('消息').findOne(1000)); sleep(1000)
+    btn_position_click(text('消息').findOne(1000)); sleep(2000)
     swipe(device.width * 0.5, device.height * 0.2, device.width * 0.5, device.height * 0.8, 500)
-    btn_position_click(text('搜索').findOne(2000)); sleep(1000)
+    btn_position_click(text('搜索').findOne(2000)); sleep(2000)
     let txt_search = text('搜索').findOne(2000)
-    txt_search.setText(my_name); sleep(1000)
-    btn_position_click(idContains('icon').findOne(2000)); sleep(1000)
+    txt_search.setText(my_name); sleep(2000)
+    btn_position_click(idContains('icon').findOne(2000)); sleep(1500)
     let list_code = ['JING_LING', 'FEI_ZHU', 'YOUKU_TV', 'PIAO_PIAO', 'TIAN_MAO', 'KAO_LA', 'CAI_NIAO', 'XINHUA_SHE', 'BAI_JINGTU', 'KE_CHUANG', 'KEJI_ZHIJIA', 'JIEFANG_RIBAO', 'DA_WAN', 'ZIJIN_SHAN', 'ZHONGGUO_LAN', 'CAI_LIFANG', 'ZHENG_GUAN', 'JIANGXI_XINWEN', 'YANG_CHENG', 'NAN_DU', 'SANYA_RIBAO', 'CHUNCHENG_WANBAO', 'GUIZHOU_DUSHIBAO', 'HUANG_HE', 'SHANXI_TOUTIAO', 'XINJING_BAO', 'JIN_YUN', 'CHONG_QING', 'LONGTOU_XINWEN', 'FENGKOU_CAIJING', 'QILU_WANBAO', 'GUOWU_YUAN', 'REN_SHE', 'YI_BAO', 'YUSHI_BAN', 'EHUI_BAN', 'SUISHEN_BAN', 'SHENZHEN_JIAOJING', 'GANFU_TONG', 'ANHUI_SHUIWU', 'WUXI_GONGJIJIN', 'SHANGHAI_GONGJIJIN', 'TIANFU_TONG', 'QINGDAN_DASHUJU', 'WANSHI_TONG', 'MINZHENG_TONG', 'MEI_TU', 'MEI_YAN', 'MANG_GUO', 'KUAI_SHOU', 'WANGYI_YUN', 'SHU_QI']
     toast('第一次获取验证码,备下次使用')
     let pre_code = get_code(null);
