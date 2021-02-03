@@ -24,7 +24,7 @@ function get_code(pre_code) {
         }
         back(); sleep(1000);
     }
-    toast('无法获取到验证码'); exit()
+    toast('无法获取到验证码');
     return null
 }
 
