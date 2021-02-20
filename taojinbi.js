@@ -174,15 +174,6 @@ function achievement_signin_task() {
     sleep(1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
 
-// //签到领话费充值金
-// function haul_wool_task(sec) {
-//     toast_console('查看-领话费充值金薅羊毛任务')
-//     if (!assure_click_task(input_value(ui.txt_haulwool_task_reg_str))) return
-//     sleep(3000); toast_console("点击领取充值金",true)
-//     btn_click(text('O1CN01NN8T8d1tBlBM5R7qG_!!6000000005864-1-tps-100-100').findOne(4000))
-//     sleep(500); btn_click(text('立即领取').findOne(2000))
-//     sleep(sec * 1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
-// }
 
 //喂小鸡任务，可以直接返回
 function feed_chick_task() {
@@ -496,9 +487,6 @@ function taojinbi_task() {
         }
         if (ui.ck_achievement_task.checked) {
             achievement_signin_task()
-        }
-        if (ui.ck_haulwool_task.checked) {
-            haul_wool_task(12)
         }
         if (ui.ck_doubao_task.checked) {
             duobao_task(task_list_ui_reg)
