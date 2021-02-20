@@ -174,14 +174,15 @@ function achievement_signin_task() {
     sleep(1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
 }
 
-//签到领话费充值金
-function haul_wool_task(sec) {
-    toast_console('查看-领话费充值金薅羊毛任务')
-    if (!assure_click_task(input_value(ui.txt_haulwool_task_reg_str))) return
-    sleep(2000); btn_click(text('O1CN01NN8T8d1tBlBM5R7qG_!!6000000005864-1-tps-100-100').findOne(6000))
-    sleep(500); btn_click(text('立即领取').findOne(2000))
-    sleep(sec * 1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
-}
+// //签到领话费充值金
+// function haul_wool_task(sec) {
+//     toast_console('查看-领话费充值金薅羊毛任务')
+//     if (!assure_click_task(input_value(ui.txt_haulwool_task_reg_str))) return
+//     sleep(3000); toast_console("点击领取充值金",true)
+//     btn_click(text('O1CN01NN8T8d1tBlBM5R7qG_!!6000000005864-1-tps-100-100').findOne(4000))
+//     sleep(500); btn_click(text('立即领取').findOne(2000))
+//     sleep(sec * 1000); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards()
+// }
 
 //喂小鸡任务，可以直接返回
 function feed_chick_task() {
@@ -402,6 +403,10 @@ function do_simple_task(epoch, sec, reg_str, back_reg) {
         wait(sec)
         let num = 8
         while (num-- && !text(back_reg).findOne(1000)) {
+            if (obj.txt.indexOf('充值金') > -1) {
+                btn_click(text('O1CN01NN8T8d1tBlBM5R7qG_!!6000000005864-1-tps-100-100').findOne(1000))
+                sleep(500); btn_click(text('立即领取').findOne(1000)); sleep(500);
+            }
             back(); btn_position_click(desc('继续退出').findOne(800))
             btn_click(textMatches('残忍离开|回到淘宝').findOne(500))
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
@@ -523,7 +528,7 @@ function main() {
 //获取选择框列表
 function get_check_box_list() {
     return [ui.ck_simple_task, ui.ck_dice_task, ui.ck_baba_farm_task, ui.ck_antforest, ui.ck_tianmao_task,
-    ui.ck_achievement_task, ui.ck_haulwool_task, ui.ck_browse_goog_shop, ui.ck_earn_10coin, ui.ck_pat_shop,
+    ui.ck_achievement_task, ui.ck_browse_goog_shop, ui.ck_earn_10coin, ui.ck_pat_shop,
     ui.ck_feedchick_task, ui.ck_notification_task, ui.ck_doubao_task, ui.ck_xiaoxiaole_task
     ];
 }
@@ -531,8 +536,8 @@ function get_check_box_list() {
 //获取输入框列表
 function get_input_list() {
     return [ui.txt_btn_reg_str, ui.txt_task_list_ui_reg, ui.txt_simple_task_reg_str, ui.txt_feedchick_task_reg_str, ui.txt_browse_goog_shop_reg_str,
-    ui.txt_baba_farm_task_reg_str, ui.txt_dice_task_reg_str, ui.txt_haulwool_task_reg_str, ui.txt_doubao_task_reg_str,
-    ui.txt_achievement_task_reg_str, ui.txt_antforest_reg_str, ui.txt_tianmao_task_reg_str, ui.txt_xiaoxiaole_task_reg_str, ui.txt_notification_task_reg_str
+    ui.txt_baba_farm_task_reg_str, ui.txt_dice_task_reg_str, ui.txt_doubao_task_reg_str, ui.txt_achievement_task_reg_str,
+    ui.txt_antforest_reg_str, ui.txt_tianmao_task_reg_str, ui.txt_xiaoxiaole_task_reg_str, ui.txt_notification_task_reg_str
     ];
 }
 
@@ -608,7 +613,6 @@ ui.layout(
                             <checkbox text="蚂蚁庄园喂小鸡任务" id="ck_feedchick_task" checked='true' />
                             <checkbox text="逛农场免费水果任务" id="ck_baba_farm_task" checked='true' />
                             <checkbox text="淘宝人生掷骰子任务" id="ck_dice_task" checked='true' />
-                            <checkbox text="薅羊毛话费充值任务" id="ck_haulwool_task" checked='true' />
                             <checkbox text="200淘金币夺宝任务" id="ck_doubao_task" checked='true' />
                             <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
                             <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='false' />
@@ -641,7 +645,6 @@ ui.layout(
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店即领" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
                             <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="掷骰子立得" /></horizontal>
-                            <horizontal><text text="薅羊毛充话费关键字:" /> <input id="txt_haulwool_task_reg_str" text="签到领话费" /></horizontal>
                             <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
                             <horizontal><text text="淘宝成就签到任务关键字:" /> <input id="txt_achievement_task_reg_str" text="满150点成就" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
