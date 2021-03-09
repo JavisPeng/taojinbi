@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.6.1
+auto() //开启无障碍服务 v1.6.2
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -148,7 +148,7 @@ function suit_task() {
     toast_console('查看-淘宝人生套装任务')
     if (!assure_click_task('套装')) return
     sleep(5000); cs_click(6, '#fed362', 0.2, 0.05, 0.7, 0.4, true) //领取套装
-    sleep(3500); assure_back('x500')
+    sleep(5000); assure_back('x500')
 }
 
 function do_baba_farm(all_task) {
@@ -516,7 +516,7 @@ function get_check_box_list() {
 function get_input_list() {
     return [ui.txt_btn_reg_str, ui.txt_task_list_ui_reg, ui.txt_simple_task_reg_str, ui.txt_feedchick_task_reg_str, ui.txt_browse_goog_shop_reg_str,
     ui.txt_baba_farm_task_reg_str, ui.txt_dice_task_reg_str, ui.txt_doubao_task_reg_str, ui.txt_achievement_task_reg_str,
-    ui.txt_antforest_reg_str, ui.txt_tianmao_task_reg_str, ui.txt_xiaoxiaole_task_reg_str, ui.txt_achievement_month_reg_str,ui.txt_simple_skip_reg_str
+    ui.txt_antforest_reg_str, ui.txt_tianmao_task_reg_str, ui.txt_xiaoxiaole_task_reg_str, ui.txt_achievement_month_reg_str, ui.txt_simple_skip_reg_str
     ];
 }
 
@@ -586,13 +586,13 @@ function solo_baba_farm() {
         requestScreenCapture(false);
         app.launch('com.taobao.taobao');
         if (!text('亲密度').findOne(1000)) {
-            btn_assure_click(desc('我的淘宝').findOne(3000))
-            let btn_x = desc('芭芭农场').findOne(1000)
+            //btn_assure_click(desc('我的淘宝').findOne(3000))
+            let btn_x = desc('芭芭农场').findOne(3000)
             if (!btn_x) {
                 toast_console('无法进入芭芭农场主界面,请手动回到淘宝主界面后重新运行'); exit()
             }
             btn_x.click(); toast_console('进入芭芭农场主界面..');
-            sleep(5000)
+            sleep(6000)
             btn_click(text('立即去收').findOne(2000))
             if (text('兑换').findOne(3000)) {
                 cs_click(2, '#984f2e', 0.05, 0.2, 0.1, 0.3); sleep(6000)
@@ -607,20 +607,21 @@ function solo_baba_farm() {
 //支付宝芭芭农场
 function zhifubao_baba_farm_task() {
     toast_console('查看-支付宝芭芭农场任务')
-    if (!assure_click_task('支付宝芭芭农场')) return
-    //btn_position_click(textContains('支付宝芭芭农场').findOne(10000))
-    sleep(6000); btn_click(textContains('继续赚').findOne(2000))
-    cs_click(3, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(1000); btn_click(text('去施肥').findOne(1000))//领取肥料
+    //if (!assure_click_task('支付宝芭芭农场')) return
+    btn_position_click(textContains('支付宝芭芭农场').findOne(10000))
+    sleep(6000); btn_click(text('继续赚肥料').findOne(2000)); sleep(1000)
+    cs_click(3, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
+    btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
-        sleep(2000)
+        toast_console('开始领取'); sleep(1500)
         for (let i = 0; i < 4; i++) {
             btn_click(text('领取').findOne(500)); sleep(500)
         }
         let btn_water = textContains('浇水').findOne(1000)//蚂蚁森林任务
         if (btn_water) {
             click(btn_water.bounds().right + 10, btn_water.bounds().top)
-            steal_energy(1, true); assure_back('队伍设置');
-            btn_click(text('领取').findOne(2000));
+            console.hide(); steal_energy(1, true); assure_back('队伍设置'); console.show()
+            sleep(1000); btn_click(text('领取').findOne(1000));
         }
         if (btn_click(text('去逛逛').findOne(1000))) {
             sleep(4000); btn_click(textContains('继续赚').findOne(5000)); return
@@ -631,6 +632,8 @@ function zhifubao_baba_farm_task() {
 
 //芭芭农场中的好友林
 function friend_forest_task() {
+    toast_console('前往芭芭农场中的好友林'); sleep(1000)
+    btn_click(text('我知道啦').findOne(1500))
     console.hide()
     cs_click(3, '#fed362', 0.01, 0.5, 0.2, 0.3); sleep(2000)// 打开好友林
     if (cs_click(3, '#b63223', 0.4, 0.1, 0.2, 0.3)) { //中心领取
