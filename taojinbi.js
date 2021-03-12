@@ -1,5 +1,10 @@
 "ui";
-auto() //开启无障碍服务 v1.6.2
+auto() //开启无障碍服务 v1.6.3
+/*
+1. 取消店铺订阅，淘宝版本升级，我的主页中关注店铺修改为订阅店铺
+2. 解决淘宝人生掷色子关键字更名问题和加载过慢问题
+3. 淘宝成就签到关键字更名问题
+*/
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -300,7 +305,7 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生逛街领能量掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
-    console.hide(); sleep(8000);
+    console.hide(); sleep(12000);
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
     cs_click(5, '#ffffff', 0.3, 0.1, 0.7, 0.5, true);
@@ -607,10 +612,11 @@ function solo_baba_farm() {
 //支付宝芭芭农场
 function zhifubao_baba_farm_task() {
     toast_console('查看-支付宝芭芭农场任务')
-    //if (!assure_click_task('支付宝芭芭农场')) return
-    btn_position_click(textContains('支付宝芭芭农场').findOne(10000))
-    sleep(6000); btn_click(text('继续赚肥料').findOne(2000)); sleep(1000)
-    cs_click(3, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
+    if (!assure_click_task('支付宝芭芭农场')) return
+    //btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
+    toast_console('等待农场主界面出现'); sleep(2000)
+    btn_click(text('继续赚肥料').findOne(6000)); sleep(5000)
+    cs_click(5, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
     btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
         toast_console('开始领取'); sleep(1500)
@@ -632,8 +638,8 @@ function zhifubao_baba_farm_task() {
 
 //芭芭农场中的好友林
 function friend_forest_task() {
-    toast_console('前往芭芭农场中的好友林'); sleep(1000)
-    btn_click(text('我知道啦').findOne(1500))
+    toast_console('前往芭芭农场中的好友林'); sleep(2000)
+    btn_click(text('我知道啦').findOne(3000))
     console.hide()
     cs_click(3, '#fed362', 0.01, 0.5, 0.2, 0.3); sleep(2000)// 打开好友林
     if (cs_click(3, '#b63223', 0.4, 0.1, 0.2, 0.3)) { //中心领取
@@ -665,7 +671,8 @@ function cancel_pat_shop() {
     thread = threads.start(function () {
         app.launch('com.taobao.taobao');
         toast('单击我的淘宝'); btn_assure_click(desc('我的淘宝').findOne(6000))
-        toast('点击关注店铺'); btn_assure_click(desc('关注店铺').findOne(2000)); sleep(1000)
+        toast('点击关注店铺'); btn_assure_click(desc('订阅店铺').findOne(2000)); sleep(1000)
+        btn_assure_click(desc('全部').findOne(2000)); 
         for (let i = 0; i < MAX_EPOCH; i++) {
             let list_x = className("ImageView").find()
             for (let i = 0; i < list_x.length; i++) {
@@ -674,7 +681,7 @@ function cancel_pat_shop() {
                 if (h < 10) { //hight较小的控件
                     if (btn_x && btn_x.parent()) {
                         btn_x.parent().click(); sleep(500)
-                        let bnt_cancel = desc('取消关注').findOne(1000)
+                        let bnt_cancel = desc('取消订阅').findOne(1000)
                         if (bnt_cancel) {
                             btn_click(bnt_cancel.parent()); sleep(500)
                         }
@@ -738,14 +745,14 @@ ui.layout(
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
                             <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
-                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能" /></horizontal>
+                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能|逛聚划算|逛菜鸟" /></horizontal>
                             <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="商品同款" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="浏览庄园立得" /></horizontal>
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店即领" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
-                            <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="掷骰子立得" /></horizontal>
+                            <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="骰子" /></horizontal>
                             <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
-                            <horizontal><text text="淘宝成就签到关键字:" /> <input id="txt_achievement_task_reg_str" text="满150点成就" /></horizontal>
+                            <horizontal><text text="淘宝成就签到关键字:" /> <input id="txt_achievement_task_reg_str" text="淘宝成就签到" /></horizontal>
                             <horizontal><text text="淘宝成就月账单关键字:" /> <input id="txt_achievement_month_reg_str" text="淘宝成就月账单" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
                             <horizontal><text text="天猫领红包任务关键字:" /> <input id="txt_tianmao_task_reg_str" text="去天猫APP领红包" /></horizontal>
@@ -763,6 +770,7 @@ ui.layout(
 ui.emitter.on("create_options_menu", menu => {
     menu.add("关于");
 });
+
 //监听选项菜单点击
 ui.emitter.on("options_item_selected", (e, item) => {
     switch (item.getTitle()) {
