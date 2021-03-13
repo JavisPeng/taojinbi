@@ -1,9 +1,10 @@
 "ui";
-auto() //开启无障碍服务 v1.6.3
+auto() //开启无障碍服务 v1.6.4
 /*
-1. 取消店铺订阅，淘宝版本升级，我的主页中关注店铺修改为订阅店铺
-2. 解决淘宝人生掷色子关键字更名问题和加载过慢问题
-3. 淘宝成就签到关键字更名问题
+1. 解决逛好店领大量金币任务的关键字(关键字被添加了浏览10秒)被修改问题
+2. 解决步数打开任务的关键字被修改的问题
+3. 解决去天猫APP任务的子标题关键字被修改的问题
+4. 解决喂小鸡任务的关键字被修改问题
 */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
@@ -96,10 +97,9 @@ function wait(sec) {
 }
 
 //根据正则表达式获取任务
-function get_task(key_reg_str) {
+function get_task(key_reg_str, skip_reg) {
     sleep(500); textMatches('每日来访领能量.+|累计任务奖励|x500').findOne(2000);
     let list_x = textMatches(input_value(ui.txt_btn_reg_str)).find()
-    skip_reg = new RegExp(input_value(ui.txt_simple_skip_reg_str))
     let reg = new RegExp(key_reg_str)
     for (let i = 0; i < list_x.length; i++) {
         let btn_topic = list_x[i].parent().child(0).child(0) //主题
@@ -107,7 +107,7 @@ function get_task(key_reg_str) {
         if (!btn_desc) continue
         let txt_desc = btn_desc.text()
         let txt_topic = btn_topic.text()
-        if (skip_reg.test(txt_topic)) continue
+        if (skip_reg != undefined && skip_reg.test(txt_topic)) continue
         if (reg.test(txt_desc) || reg.test(txt_topic)) {
             toast_console(txt_topic)
             let obj = new Object(); obj.x = list_x[i]; obj.txt = txt_topic;
@@ -403,8 +403,9 @@ function duobao_task(back_reg) {
 //执行简单的浏览任务
 function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
     toast_console('查看-可执行的简单浏览任务')
+    skip_reg = new RegExp(input_value(ui.txt_simple_skip_reg_str))
     for (let i = 0; i < epoch; i++) {
-        let obj = get_task(reg_str)
+        let obj = get_task(reg_str, skip_reg)
         if (!obj) {
             console.log('简单浏览任务执行完毕'); break
         }
@@ -615,8 +616,8 @@ function zhifubao_baba_farm_task() {
     if (!assure_click_task('支付宝芭芭农场')) return
     //btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
     toast_console('等待农场主界面出现'); sleep(2000)
-    btn_click(text('继续赚肥料').findOne(6000)); sleep(5000)
-    cs_click(5, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
+    btn_click(text('继续赚肥料').findOne(6000)); sleep(6000)
+    cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
     btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
         toast_console('开始领取'); sleep(1500)
@@ -647,7 +648,7 @@ function friend_forest_task() {
     }
     //收取肥料
     let fu = images.fromBase64('/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAOABEDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAMCBQb/xAAcEAACAwEBAQEAAAAAAAAAAAABAgADERITIQT/xAAXAQADAQAAAAAAAAAAAAAAAAAAAwQF/8QAGBEBAQADAAAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/ALHn1f8AQQzau59khWE8LFZtY/RsQz2e1qVkAEndjK1ue2hWZeUOiZ8TY3dabmEX0YQP5f/Z')
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
         let img = captureScreen()
         var point = findImage(img, fu, { region: [0.1 * device.width, 0.3 * device.height], threshold: 0.9 });
         if (point) {
@@ -672,7 +673,7 @@ function cancel_pat_shop() {
         app.launch('com.taobao.taobao');
         toast('单击我的淘宝'); btn_assure_click(desc('我的淘宝').findOne(6000))
         toast('点击关注店铺'); btn_assure_click(desc('订阅店铺').findOne(2000)); sleep(1000)
-        btn_assure_click(desc('全部').findOne(2000)); 
+        btn_assure_click(desc('全部').findOne(2000));
         for (let i = 0; i < MAX_EPOCH; i++) {
             let list_x = className("ImageView").find()
             for (let i = 0; i < list_x.length; i++) {
@@ -745,10 +746,10 @@ ui.layout(
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
                             <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
-                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能|逛聚划算|逛菜鸟" /></horizontal>
-                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="商品同款" /></horizontal>
-                            <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="浏览庄园立得" /></horizontal>
-                            <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店即领" /></horizontal>
+                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能|逛聚划算|逛菜鸟|步数" /></horizontal>
+                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="商品同款|逛好店|去天猫APP" /></horizontal>
+                            <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="喂小鸡" /></horizontal>
+                            <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
                             <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="骰子" /></horizontal>
                             <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
