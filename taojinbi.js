@@ -1,10 +1,8 @@
 "ui";
-auto() //开启无障碍服务 v1.6.4
+auto() //开启无障碍服务 v1.6.5
 /*
-1. 解决逛好店领大量金币任务的关键字(关键字被添加了浏览10秒)被修改问题
-2. 解决步数打开任务的关键字被修改的问题
-3. 解决去天猫APP任务的子标题关键字被修改的问题
-4. 解决喂小鸡任务的关键字被修改问题
+1. 解决支付宝芭芭农场点击领取无效问题
+2. 解决淘金币夺宝名称更改问题
 */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
@@ -615,9 +613,9 @@ function zhifubao_baba_farm_task() {
     toast_console('查看-支付宝芭芭农场任务')
     if (!assure_click_task('支付宝芭芭农场')) return
     //btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
-    toast_console('等待农场主界面出现'); sleep(2000)
-    btn_click(text('继续赚肥料').findOne(6000)); sleep(6000)
-    cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.25); sleep(500); //领取肥料
+    toast_console('等待农场主界面出现'); 
+    btn_click(text('继续赚肥料').findOne(7000)); sleep(1000)
+    cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.15); sleep(500); //领取肥料
     btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
         toast_console('开始领取'); sleep(1500)
@@ -752,7 +750,7 @@ ui.layout(
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
                             <horizontal><text text="点掷骰子任务关键字:" /> <input id="txt_dice_task_reg_str" text="骰子" /></horizontal>
-                            <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="淘金币夺宝" /></horizontal>
+                            <horizontal><text text="200淘金币夺宝关键字:" /> <input id="txt_doubao_task_reg_str" text="金币夺宝" /></horizontal>
                             <horizontal><text text="淘宝成就签到关键字:" /> <input id="txt_achievement_task_reg_str" text="淘宝成就签到" /></horizontal>
                             <horizontal><text text="淘宝成就月账单关键字:" /> <input id="txt_achievement_month_reg_str" text="淘宝成就月账单" /></horizontal>
                             <horizontal><text text="蚂蚁森林任务关键字:" /> <input id="txt_antforest_reg_str" text="蚂蚁森林" /></horizontal>
