@@ -1,8 +1,7 @@
 "ui";
-auto() //开启无障碍服务 v1.6.5
+auto() //开启无障碍服务 v1.6.6
 /*
-1. 解决支付宝芭芭农场点击领取无效问题
-2. 解决淘金币夺宝名称更改问题
+1. 解决消消乐升级后，手机back键无效问题(必须点击左上角图标- -)以及跳过指定界面
 */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
@@ -301,7 +300,7 @@ function tianmao_task() {
 
 //掷骰子任务
 function dice_task() {
-    toast_console('查看-淘宝人生逛街领能量掷骰子任务')
+    toast_console('查看-淘宝人生掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
     console.hide(); sleep(12000);
     //去他大爷的神秘礼物
@@ -333,11 +332,12 @@ function xiaoxiaole_task() {
     toast_console('查看-消消乐任务')
     if (!assure_click_task(input_value(ui.txt_xiaoxiaole_task_reg_str))) return
     console.hide(); sleep(10000)
-    //开心收下奖励
-    cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);
+    cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);  //开心收下奖励
+    cs_click(3, '#ffffff', 0.8, 0.05, 0.2, 0.2) //跳过
+    sleep(2000)
     //回到主页
     for (let i = 0; i < 6; i++) {
-        back(); sleep(1000)
+        cs_click(1, '#8d5546', 0, 0, 0.1, 0.1); sleep(1000) //back(); 
         if (cs_click(1, '#ffbd29', 0.2, 0.5, 0.45, 0.45)) break //橙色返回
         if (cs_click(1, '#965417', 0.2, 0.2, 0.6, 0.6, true)) break //咖啡色暂时返回
     }
@@ -351,6 +351,8 @@ function xiaoxiaole_task() {
     sleep(1000); cs_click(3, '#63cbc4', 0.5, 0.3, 0.4, 0.4, true); sleep(2000)
     //开始 绿色方块
     cs_click(2, '#11c6bf', 0.3, 0.5, 0.3, 0.3); sleep(2000)
+    cs_click(3, '#ffffff', 0.8, 0.05, 0.2, 0.2) //跳过
+    sleep(2000)
     //消除方块,兼容不同机型
     let rgb = '#fff0e0'
     img = captureScreen()
@@ -367,7 +369,8 @@ function xiaoxiaole_task() {
             swipe(x1, y1, x2, y2, 600); sleep(800)
         });
     }
-    back(); sleep(800);
+    cs_click(2, '#8d5546', 0, 0, 0.1, 0.1); //back()
+    sleep(1000);
     //回到主页1 灰色的暂时离开
     cs_click(2, '#9d6031', 0.2, 0.2, 0.4, 0.5, true)
     //回到主页2 金色的回到主页
@@ -613,9 +616,9 @@ function zhifubao_baba_farm_task() {
     toast_console('查看-支付宝芭芭农场任务')
     if (!assure_click_task('支付宝芭芭农场')) return
     //btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
-    toast_console('等待农场主界面出现'); 
-    btn_click(text('继续赚肥料').findOne(7000)); sleep(1000)
-    cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.15); sleep(500); //领取肥料
+    toast_console('等待农场主界面出现');
+    btn_click(text('继续赚肥料').findOne(7000)); sleep(2000)
+    cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.15); sleep(1500); //领取肥料
     btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
         toast_console('开始领取'); sleep(1500)
@@ -708,7 +711,7 @@ ui.layout(
                             <checkbox text="200淘金币夺宝任务" id="ck_doubao_task" checked='true' />
                             <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
                             <checkbox text="淘宝成就月账单任务" id="ck_achievement_month_task" checked='true' />
-                            <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='false' />
+                            <checkbox text="天猫程序领红包任务" id="ck_tianmao_task" checked='true' />
                             <checkbox text="支付宝蚂蚁森林任务" id="ck_antforest" checked='true' />
                             <checkbox text="开心砖块消消乐任务" id="ck_xiaoxiaole_task" checked='true' />
                             <checkbox text="逛农场免费水果任务" id="ck_baba_farm_task" checked='true' />
