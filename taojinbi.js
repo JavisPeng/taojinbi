@@ -285,6 +285,35 @@ function browse_goodshop_task(not_key_reg_str) {
     }
     wait(wait_sec); assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards(true)
 }
+//单独执行逛好店领10金币
+function browse_goodshop_task_too(not_key_reg_str) {
+    toast_console('单独-逛好店并领10金币任务')
+    // if (!assure_click_task(input_value(ui.txt_browse_goog_shop_reg_str))) return
+    back(); sleep(800); //回到[赚金币]主界面
+    for (let i = 0; i < 6; i++) {
+        btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
+        btn_x = text('赚金币').findOne(1000)
+        if (btn_x) break
+    }
+    if (!btn_x) {
+        toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
+    }
+    btn_x.parent().parent().child(0).child(0).click(); sleep(800);  //进入[逛店铺]
+    for (let i = 0; i < 11 && ui.ck_earn_10coin.checked; i++) {
+        let btn_x = desc('逛10秒+10').findOne(2000)
+        toast_console('逛10秒+10金币/' + (i + 1))
+        if (!btn_x) break
+        btn_x.parent().click(); sleep(13000);
+        if (ui.ck_pat_shop.checked) {
+            btn_x = text('关注+10').findOne(800)
+            if (btn_x) {
+                btn_click(btn_x.parent()); sleep(800)
+            }
+        }
+        back(); sleep(800);
+    }
+    back();
+}
 
 //去天猫红包任务
 function tianmao_task() {
@@ -498,6 +527,9 @@ function taojinbi_task() {
         }
         get_rewards(true)
     }
+    if (ui.ck_browse_goog_shop.checked) {
+        browse_goodshop_task_too();
+    }    
     toast_console('*****淘金任务执行完毕*****')
 }
 
