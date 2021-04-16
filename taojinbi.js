@@ -331,7 +331,7 @@ function dice_task() {
 function xiaoxiaole_task() {
     toast_console('查看-消消乐任务')
     if (!assure_click_task(input_value(ui.txt_xiaoxiaole_task_reg_str))) return
-    console.hide(); sleep(10000)
+    console.hide(); sleep(20000)
     cs_click(3, '#11c6bf', 0.2, 0.6, 0.3, 0.3);  //开心收下奖励
     cs_click(3, '#ffffff', 0.8, 0.05, 0.2, 0.2) //跳过
     sleep(2000)
@@ -414,7 +414,13 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
             console.log('继续执行简单浏览任务'); continue
         }
         obj.x.click();
-        wait(sec)
+        if(textMatches("下滑浏览商品.+").findOne(1000)) {
+            console.log('执行下滑浏览操作')
+            do_simple_task_with_swap()
+        } else {
+            console.log("等待"+sec+"秒")
+            wait(sec)
+        }
         let num = 8
         while (num-- && !text(back_reg).findOne(1000)) {
             if (obj.txt.indexOf('充值金') > -1) {
@@ -426,6 +432,13 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
             if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
         }
         get_rewards(reward)
+    }
+}
+
+function do_simple_task_with_swap() {
+    for (let i = 0; i < 8; i++) {
+        swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.2, 1000)
+        sleep(2000)
     }
 }
 
