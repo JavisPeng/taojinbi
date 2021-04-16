@@ -290,7 +290,7 @@ function browse_goodshop_task(not_key_reg_str) {
 function tianmao_task() {
     toast_console('查看-去天猫APP领红包任务')
     if (!assure_click_task(input_value(ui.txt_tianmao_task_reg_str))) return
-    sleep(4000)
+    sleep(15000)
     if (text('攻略').findOne(4000)) {
         btn_click(textContains('继续逛逛').findOne(1000))
         wait(wait_sec)
@@ -437,7 +437,10 @@ function get_into_taojinbi_task_list() {
     app.launch('com.taobao.taobao'); sleep(1500)
     if (!text(task_list_ui_reg).findOne(2000)) {
         let num = 8
-        while (num-- && !desc('领淘金币').findOne(1000)) back();
+        while (num-- && !desc('领淘金币').findOne(1000)) {
+            console.log("没找到 领淘金币 按钮, 准备后退")
+            back();
+        }
         let btn_x = desc('领淘金币').findOne(500)
         if (!btn_x) {
             toast_console('无法返回到淘宝主界面,请手动回到淘宝主界面后重新运行'); exit()
