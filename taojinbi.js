@@ -67,6 +67,32 @@ function cs_click(num, rgb, xr, yr, wr, hr, flipup) {
     return false
 }
 
+function find_img_from_base64(try_times, target_img, pos_x, pos_y, width, height) {
+    while (try_times--) {
+        let screen = captureScreen()
+        var target = images.fromBase64(target_img)
+        let point = findImage(screen, target, {
+            region: [
+                screen.getWidth() * pos_x,
+                screen.getHeight() * pos_y,
+                screen.getWidth() * width,
+                screen.getHeight() * height
+            ],
+            threshold: 0.8
+        })
+        if (point) {
+            toast_console("找到 " + target_img + " posX: " + point.x + " posY: " + point.y, true)
+            console.show()
+            return point
+        }
+        if (try_times) {
+            sleep(1000)
+        }
+    }
+    toast_console("没找到 " + target_img, true)
+    return false
+}
+
 //===================业务逻辑函数=========================
 //获取[浏览以下商品]的所在组控件数
 function get_group_count() {
@@ -303,27 +329,42 @@ function dice_task() {
     toast_console('查看-淘宝人生掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
     console.hide(); sleep(12000);
+
+    const close_btn_base64 = "data:image/jpeg;base64,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"
+    var close_btn_pos = find_img_from_base64(3, close_btn_base64, 0, 0, 1, 1)
+
+    if (close_btn_pos) {
+        click(close_btn_pos.x, close_btn_pos.y)
+    }
+
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
     cs_click(5, '#ffffff', 0.3, 0.1, 0.7, 0.5, true);
+    
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
+    
     //橙色收下奖励按钮按钮
     toast_console('掷骰子任务-点击5次开心收下按钮(一点都不开心- -)', true)
     for (let i = 0; i < 5; i++) {
         cs_click(1, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true); sleep(500)
     }
     sleep(1000)
+    
     //金色前进按钮
     toast_console('掷骰子任务-尝试点击色子前进', true)
     cs_click(4, '#fff89d', 0.2, 0.5, 0.45, 0.3); sleep(3000)
+    
     //橙色收下奖励按钮按钮
     cs_click(2, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true);
     back(); sleep(1000)
+    
     //橙色返回淘宝按钮
     cs_click(3, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true)
-    btn_click(text('立刻离开').findOne(1000)); get_rewards(true); console.show()
+    btn_click(text('立刻离开').findOne(1000)); get_rewards(true); 
+    
+    console.show()
 }
 
 
@@ -414,7 +455,7 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
             console.log('继续执行简单浏览任务'); continue
         }
         obj.x.click();
-        if(textMatches("下滑浏览商品.+").findOne(1000)) {
+        if(textMatches("下滑浏览商品.+").findOne(2000)) {
             console.log('执行下滑浏览操作')
             do_simple_task_with_swap()
         } else {
