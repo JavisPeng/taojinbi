@@ -1,7 +1,8 @@
 "ui";
-auto() //开启无障碍服务 v1.6.6
+auto() //开启无障碍服务 v1.6.7
 /*
-1. 解决消消乐升级后，手机back键无效问题(必须点击左上角图标- -)以及跳过指定界面
+1.淘宝人生加载过慢
+2.收藏店铺关键字更新为‘订阅+10’
 */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
@@ -276,7 +277,7 @@ function browse_goodshop_task(not_key_reg_str) {
         if (!btn_x) break
         btn_x.parent().click(); sleep(13000);
         if (ui.ck_pat_shop.checked) {
-            btn_x = text('关注+10').findOne(800)
+            btn_x = textContains('+10').findOne(800)
             if (btn_x) {
                 btn_click(btn_x.parent()); sleep(800)
             }
@@ -302,7 +303,7 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
-    console.hide(); sleep(12000);
+    console.hide(); sleep(15000);
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
     cs_click(5, '#ffffff', 0.3, 0.1, 0.7, 0.5, true);
@@ -614,10 +615,11 @@ function solo_baba_farm() {
 //支付宝芭芭农场
 function zhifubao_baba_farm_task() {
     toast_console('查看-支付宝芭芭农场任务')
-    if (!assure_click_task('支付宝芭芭农场')) return
-    //btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
+    //if (!assure_click_task('支付宝芭芭农场')) return
+    btn_position_click(textContains('支付宝芭芭农场').findOne(1000))
     toast_console('等待农场主界面出现');
     btn_click(text('继续赚肥料').findOne(7000)); sleep(2000)
+    toast_console('领取肥料');
     cs_click(4, '#fed362', 0.55, 0.65, 0.45, 0.15); sleep(1500); //领取肥料
     btn_click(text('去施肥').findOne(1000)); sleep(500)
     if (cs_click(2, '#fed362', 0.1, 0.2, 0.1, 0.2, true)) {  //打开列表
@@ -640,8 +642,8 @@ function zhifubao_baba_farm_task() {
 
 //芭芭农场中的好友林
 function friend_forest_task() {
-    toast_console('前往芭芭农场中的好友林'); sleep(2000)
-    btn_click(text('我知道啦').findOne(3000))
+    toast_console('前往芭芭农场中的好友林'); sleep(3000)
+    btn_click(textContains('我知道啦').findOne(3500))
     console.hide()
     cs_click(3, '#fed362', 0.01, 0.5, 0.2, 0.3); sleep(2000)// 打开好友林
     if (cs_click(3, '#b63223', 0.4, 0.1, 0.2, 0.3)) { //中心领取
