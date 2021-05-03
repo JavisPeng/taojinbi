@@ -1,8 +1,8 @@
 "ui";
-auto() //开启无障碍服务 v1.6.7
+auto() //开启无障碍服务 v1.6.8
+
 /*
-1.淘宝人生加载过慢
-2.收藏店铺关键字更新为‘订阅+10’
+1. 解决浏览精选宝贝，下滑才计时的问题
 */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
@@ -88,6 +88,9 @@ function wait(sec) {
         if (a1 || a10 || a) {
             toast_console('到时立即返回')
             return true
+        }
+        if(sec<=t_sec-2 && textContains('下滑浏览商品').findOne(100)){
+            swipe(device.width * 0.5, device.height * 0.7, device.width * 0.5, device.height * 0.5, 800)
         }
     }
     toast_console('等待' + t_sec + 's返回');
@@ -303,10 +306,10 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
-    console.hide(); sleep(15000);
+    console.hide(); sleep(13000);
     //去他大爷的神秘礼物
-    toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘)', true)
-    cs_click(5, '#ffffff', 0.3, 0.1, 0.7, 0.5, true);
+    toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘礼盒)', true)
+    cs_click(5, '#ffffff', 0.2, 0.1, 0.6, 0.6, true);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
@@ -424,7 +427,7 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
             }
             back(); btn_position_click(desc('继续退出').findOne(400))
             btn_click(textMatches('残忍离开|回到淘宝').findOne(400))
-            if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
+            //if (obj.txt.indexOf('淘宝吃货') > -1) cs_click(1, '#ff4c55', 0.2, 0.2, 0.4, 0.4, true)
         }
         get_rewards(reward)
     }
@@ -749,7 +752,7 @@ ui.layout(
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
                             <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
-                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能|逛聚划算|逛菜鸟|步数" /></horizontal>
+                            <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="浏览1|逛1|浏览抽|浏览得能|逛聚划算|逛菜鸟|步数|浏览心" /></horizontal>
                             <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="商品同款|逛好店|去天猫APP" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="喂小鸡" /></horizontal>
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
