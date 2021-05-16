@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.6.9
+auto() //开启无障碍服务 v1.6.10
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -87,7 +87,7 @@ function wait(sec, title) {
             return true
         }
         if (sec <= t_sec - 2 && slide_down) {
-            swipe(device.width * 0.5, device.height * 0.7, device.width * 0.5, device.height * 0.5, 400)
+            swipe(device.width * 0.5, device.height * 0.75, device.width * 0.5, device.height * 0.5, 800)
         }
     }
     toast_console('等待' + t_sec + 's返回');
@@ -311,7 +311,7 @@ function dice_task() {
     console.hide(); sleep(13000);
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘礼盒)', true)
-    cs_click(5, '#ffffff', 0.2, 0.1, 0.6, 0.6, true);
+    cs_click(5, '#e9e9e9', 0.2, 0.1, 0.6, 0.6, true);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
@@ -772,7 +772,7 @@ ui.layout(
                             <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="^浏|^逛|步数" /></horizontal>
-                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐" /></horizontal>
+                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐|逛街" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="喂小鸡" /></horizontal>
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
