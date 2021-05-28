@@ -76,7 +76,7 @@ function get_group_count() {
 function wait(sec, title) {
     let t_sec = sec
     let pre_num = 0  //[浏览以下商品]的所在组控件数有时会变化
-    slide_down = title && title.indexOf('精选') > -1
+    slide_down = title && title.indexOf('精选') > -1 || textMatches('下滑.+').findOne(2000)
     while (sec--) {
         let a1 = textMatches('点我领取奖励|任务已完成快去领奖吧|任务完成|任务已完成|任务已经|任务已经全部完成啦').findOne(10)
         let cur_num = get_group_count()
