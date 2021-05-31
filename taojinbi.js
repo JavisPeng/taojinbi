@@ -1,5 +1,10 @@
 "ui";
-auto() //开启无障碍服务 v1.6.10
+auto() //开启无障碍服务 v1.7.0
+
+/**
+ 1. 新增618喵币活动 (检测出来只+200，请勿使用)
+ 2. 解决部分简单浏览任务下滑问题
+ */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -76,7 +81,8 @@ function get_group_count() {
 function wait(sec, title) {
     let t_sec = sec
     let pre_num = 0  //[浏览以下商品]的所在组控件数有时会变化
-    slide_down = title && title.indexOf('精选') > -1
+    let reg = new RegExp(input_value(ui.txt_simple_down_reg_str))
+    slide_down = title && reg.test(title)
     while (sec--) {
         let a1 = textMatches('点我领取奖励|任务已完成快去领奖吧|任务完成|任务已完成|任务已经|任务已经全部完成啦').findOne(10)
         let cur_num = get_group_count()
@@ -86,6 +92,7 @@ function wait(sec, title) {
             toast_console('到时立即返回')
             return true
         }
+        if (!slide_down) slide_down = textContains('下滑浏览商品').findOne(200)
         if (sec <= t_sec - 2 && slide_down) {
             swipe(device.width * 0.5, device.height * 0.75, device.width * 0.5, device.height * 0.5, 800)
         }
@@ -300,7 +307,6 @@ function tianmao_task() {
         btn_click(textContains('继续逛逛').findOne(1000))
         wait(wait_sec)
     }
-
     assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards(true)
 }
 
@@ -472,7 +478,7 @@ function do_envelope_signin() {
 function enter_mine() {
     toast_console('启动淘宝app')
     app.launch('com.taobao.taobao'); sleep(1500)
-    btn_click(desc('我的淘宝').findOne(2000));sleep(1000)
+    btn_click(desc('我的淘宝').findOne(2000)); sleep(1000)
 }
 
 function taojinbi_task() {
@@ -544,7 +550,7 @@ function get_check_box_list() {
 //获取输入框列表
 function get_input_list() {
     return [ui.txt_btn_reg_str, ui.txt_task_list_ui_reg, ui.txt_simple_task_reg_str, ui.txt_feedchick_task_reg_str, ui.txt_browse_goog_shop_reg_str,
-    ui.txt_baba_farm_task_reg_str, ui.txt_dice_task_reg_str, ui.txt_doubao_task_reg_str, ui.txt_achievement_task_reg_str,
+    ui.txt_baba_farm_task_reg_str, ui.txt_dice_task_reg_str, ui.txt_doubao_task_reg_str, ui.txt_achievement_task_reg_str, ui.txt_simple_down_reg_str,
     ui.txt_antforest_reg_str, ui.txt_tianmao_task_reg_str, ui.txt_xiaoxiaole_task_reg_str, ui.txt_achievement_month_reg_str, ui.txt_simple_skip_reg_str
     ];
 }
@@ -717,6 +723,42 @@ function cancel_pat_shop() {
     })
 }
 
+//618喵币
+function miaomiao() {
+    if (thread && thread.isAlive()) {
+        toast_console('当前程序正在执行其他任务,请结束后再运行', true); return
+    }
+    thread = threads.start(function () {
+        app.launch('com.taobao.taobao'); sleep(1000)
+        console.show()
+        let ui_main_txt = "累计任务奖励"
+        btn_click(text('领取奖励').findOne(1000)); sleep(500)
+        btn_position_click(text('每日签到领喵币(0/1)').findOne(500)); sleep(800)
+        let obj = get_task('浏览店铺领喵币')
+        if (obj && obj.x) {
+            console.log(obj.txt)
+            obj.x.click(); sleep(1000)
+            for (let i = 1; i <= 11; i++) {
+                let list_x = text('+30000').find()
+                if (list_x.length > 1) {
+                    btn_position_click(list_x[1])
+                    wait(16)
+                    assure_back('种草喵币城'); sleep(1000)
+                    if (textContains('喵币已到账').findOne(100)) break
+                    if (i % 2 == 0) { //换
+                        btn_click(text('O1CN01z7wjgi25TPrmfuMPh_!!6000000007527-2-tps-256-106.png_290x10000.jpg_').findOne(1000))
+                        sleep(1000)
+                    }
+                }
+            }
+        }
+        assure_back(ui_main_txt); sleep(500)
+        btn_click(text('领取奖励').findOne(1000)); sleep(500)
+        let simple_task_reg_str = input_value(ui.txt_simple_task_reg_str)
+        do_simple_task(8, 15, simple_task_reg_str, ui_main_txt)
+    })
+}
+
 ui.layout(
     <drawer id="drawer">
         <vertical>
@@ -746,6 +788,7 @@ ui.layout(
                             </horizontal>
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_toogle" text="任务选择开关" />
+                            {/* <button id="btn_miaomiao" text="单独执行618喵喵任务" /> */}
                             <button id="btn_save_opt" text="保存当前配置" />
                             <button id="btn_load_opt" text="加载本地配置" />
                             <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
@@ -773,6 +816,7 @@ ui.layout(
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="^浏|^逛|步数" /></horizontal>
                             <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐|逛街" /></horizontal>
+                            <horizontal><text text="任务浏览下滑关键字:" /> <input id="txt_simple_down_reg_str" text="精选|你喜欢的" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="喂小鸡" /></horizontal>
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
                             <horizontal><text text="农场水果任务关键字:" /> <input id="txt_baba_farm_task_reg_str" text="逛农场" /></horizontal>
@@ -820,6 +864,8 @@ ui.btn_load_opt.click(load_opt)
 ui.btn_cancel_pat_shop.click(cancel_pat_shop)
 ui.btn_exit.click(function () { ui.finish() })
 ui.btn_babafarm.click(solo_baba_farm)
+ui.btn_miaomiao.click(miaomiao)
+
 //运行选择项
 ui.btn_run_main.click(function () {
     if (thread && thread.isAlive()) {
