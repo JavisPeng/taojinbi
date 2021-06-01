@@ -788,7 +788,7 @@ ui.layout(
                             </horizontal>
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_toogle" text="任务选择开关" />
-                            <button id="btn_miaomiao" text="618喵喵任务(黑号误使用)" />
+                            <button id="btn_miaomiao" text="618喵喵任务(导致黑号,请勿使用)" />
                             <button id="btn_save_opt" text="保存当前配置" />
                             <button id="btn_load_opt" text="加载本地配置" />
                             <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
