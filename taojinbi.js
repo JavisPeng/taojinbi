@@ -1,5 +1,9 @@
 "ui";
-auto() //开启无障碍服务 v1.7.0
+auto() //开启无障碍服务 v1.7.1
+/**
+ * 1. 喂小鸡任务直接返回
+ * 2. 简单任务跳过六一淘金币专场活动
+ */
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -91,6 +95,7 @@ function wait(sec, title) {
         if (sec <= t_sec - 2 && slide_down) {
             swipe(device.width * 0.5, device.height * 0.75, device.width * 0.5, device.height * 0.5, 800)
         }
+        if (title && title.indexOf('喂小鸡') > -1) break
     }
     toast_console('等待' + t_sec + 's返回');
     return true
@@ -309,10 +314,10 @@ function tianmao_task() {
 function dice_task() {
     toast_console('查看-淘宝人生掷骰子任务')
     if (!assure_click_task(input_value(ui.txt_dice_task_reg_str))) return
-    console.hide(); sleep(13000);
+    console.hide(); sleep(11000);
     //去他大爷的神秘礼物
     toast_console('掷骰子任务-查看是否有神秘礼物(QTM的神秘礼盒)', true)
-    cs_click(5, '#e9e9e9', 0.2, 0.1, 0.6, 0.6, true);
+    cs_click(3, '#fe5200', 0.2, 0.5, 0.3, 0.2);
     //单击礼包
     toast_console('掷骰子任务-查看是否有礼包(QTM的礼包)', true)
     cs_click(3, '#fee998', 0.2, 0.2, 0.7, 0.8);
@@ -321,10 +326,10 @@ function dice_task() {
     for (let i = 0; i < 5; i++) {
         cs_click(1, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true); sleep(500)
     }
-    sleep(4000)
+    sleep(1000)
     //金色前进按钮
     toast_console('掷骰子任务-尝试点击色子前进', true);
-    cs_click(4, '#fff89d', 0.2, 0.5, 0.45, 0.3); sleep(2000)
+    cs_click(5, '#fff89d', 0.3, 0.5, 0.3, 0.2); sleep(2000)
     //橙色收下奖励按钮按钮
     cs_click(2, '#ff7d44', 0.1, 0.15, 0.2, 0.5, true);
     toast_console('返回');
@@ -339,12 +344,13 @@ function miaomiao618_tak() {
     toast_console('查看-618喵币任务')
     if (!assure_click_task("喂猫")) return
     sleep(1000)
+    btn_click(textContains('自生产猫币').findOne(2000)) 
     let btn = textContains('喂猫领红包').findOne(2000)
     btn_click(btn); sleep(2000)
     assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards(true)
 }
 
-
+//阅读小时
 function reading_task() {
     toast_console('查看-阅读小说任务')
     if (!assure_click_task("阅读任意小说")) return
@@ -517,9 +523,6 @@ function taojinbi_task() {
         if (ui.ck_simple_task.checked) {
             do_simple_task(MAX_EPOCH, wait_sec, simple_task_reg_str, task_list_ui_reg, true)
         }
-        if (ui.ck_feedchick_task.checked) {
-            feed_chick_task()
-        }
         if (ui.ck_618_task.checked) {
             miaomiao618_tak()
         }
@@ -538,7 +541,7 @@ function taojinbi_task() {
         if (ui.ck_browse_goog_shop.checked) {
             browse_goodshop_task();
         }
-        if (ui.ck_achievement_month_task) {
+        if (ui.ck_achievement_month_task.checked) {
             achievement_month_task()
         }
         if (ui.ck_achievement_task.checked) {
@@ -571,7 +574,7 @@ function main() {
 function get_check_box_list() {
     return [ui.ck_envelope_task, ui.ck_simple_task, ui.ck_dice_task, ui.ck_baba_farm_task, ui.ck_antforest, ui.ck_tianmao_task,
     ui.ck_achievement_task, ui.ck_browse_goog_shop, ui.ck_earn_10coin, ui.ck_pat_shop,
-    ui.ck_feedchick_task, ui.ck_doubao_task, ui.ck_xiaoxiaole_task, ui.ck_achievement_month_task,
+    ui.ck_doubao_task, ui.ck_xiaoxiaole_task, ui.ck_achievement_month_task,
     ui.ck_baba_suit_task, ui.ck_baba_xxl_task, ui.ck_baba_zhifubao_task, ui.ck_baba_friend_forest_task, ui.ck_618_task, ui.ck_reading_task
     ];
 }
@@ -766,7 +769,6 @@ ui.layout(
                         <vertical >
                             <checkbox text="每日领红包签到任务" id="ck_envelope_task" checked='true' />
                             <checkbox text="简单的逛逛浏览任务" id="ck_simple_task" checked='true' />
-                            <checkbox text="蚂蚁庄园喂小鸡任务" id="ck_feedchick_task" checked='true' />
                             <checkbox text="淘宝人生掷骰子任务" id="ck_dice_task" checked='true' />
                             <checkbox text="200淘金币夺宝任务" id="ck_doubao_task" checked='true' />
                             <checkbox text="淘宝成就的签到任务" id="ck_achievement_task" checked='true' />
@@ -777,7 +779,6 @@ ui.layout(
                             <checkbox text="逛农场免费水果任务" id="ck_baba_farm_task" checked='true' />
                             <checkbox text="618养猫猫活动任务" id="ck_618_task" checked='true' />
                             <checkbox text="阅读小说十秒任务" id="ck_reading_task" checked='true' />
-
                             <horizontal>
                                 <checkbox text="逛好店浏览10秒任务" id="ck_browse_goog_shop" checked='true' />
                                 <checkbox text="10秒+10" id="ck_earn_10coin" checked='true' />
@@ -811,7 +812,7 @@ ui.layout(
                             <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="^浏|^逛|步数|狂欢活动" /></horizontal>
-                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐|逛街" /></horizontal>
+                            <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐|逛街|六一" /></horizontal>
                             <horizontal><text text="任务浏览下滑关键字:" /> <input id="txt_simple_down_reg_str" text="精选|你喜欢的" /></horizontal>
                             <horizontal><text text="庄园小鸡任务关键字:" /> <input id="txt_feedchick_task_reg_str" text="喂小鸡" /></horizontal>
                             <horizontal><text text="逛好店10金币关键字:" /> <input id="txt_browse_goog_shop_reg_str" text="逛好店" /></horizontal>
