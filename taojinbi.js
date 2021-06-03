@@ -91,7 +91,7 @@ function wait(sec, title) {
             toast_console('到时立即返回')
             return true
         }
-        if (!slide_down) slide_down = textContains('下滑浏览商品').findOne(200)
+        if (!slide_down) slide_down = textContains('下滑').findOne(200)
         if (sec <= t_sec - 2 && slide_down) {
             swipe(device.width * 0.5, device.height * 0.75, device.width * 0.5, device.height * 0.5, 800)
         }
