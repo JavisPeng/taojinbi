@@ -1,9 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.7.1
-/**
- * 1. 喂小鸡任务直接返回
- * 2. 简单任务跳过六一淘金币专场活动
- */
+auto() //开启无障碍服务 v1.7.2
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -91,7 +87,7 @@ function wait(sec, title) {
             toast_console('到时立即返回')
             return true
         }
-        if (!slide_down) slide_down = textContains('下滑浏览商品').findOne(200)
+        if (!slide_down) slide_down = textContains('下滑').findOne(200)
         if (sec <= t_sec - 2 && slide_down) {
             swipe(device.width * 0.5, device.height * 0.75, device.width * 0.5, device.height * 0.5, 800)
         }
@@ -344,13 +340,13 @@ function miaomiao618_tak() {
     toast_console('查看-618喵币任务')
     if (!assure_click_task("喂猫")) return
     sleep(1000)
-    btn_click(textContains('自生产猫币').findOne(2000)) 
+    btn_click(textContains('自生产猫币').findOne(2000))
     let btn = textContains('喂猫领红包').findOne(2000)
     btn_click(btn); sleep(2000)
     assure_back(input_value(ui.txt_task_list_ui_reg)); get_rewards(true)
 }
 
-//阅读小时
+//阅读小说
 function reading_task() {
     toast_console('查看-阅读小说任务')
     if (!assure_click_task("阅读任意小说")) return
@@ -358,7 +354,7 @@ function reading_task() {
     let btn_x = text('5').findOne(3000)
     if (btn_x) {
         btn_position_click(btn_x); sleep(1000)
-        btn_x = textContains('进入阅读页').findOne(1000)
+        btn_x = textContains('进入阅读页').findOne(2000)
         if (btn_x) {
             btn_position_click(btn_x);
             wait(12)
@@ -432,10 +428,13 @@ function duobao_task(back_reg) {
         swipe(device.width / 2, device.height * 0.8, device.width / 2, device.height * 0.2, 500)
     }
     btn_assure_click(textMatches('立即参与|立即夺宝').findOne(3000))
-    btn_click(text('参与兑换抽奖号').findOne(3000))
+    btn_click(text('参与兑换抽奖号').findOne(2000))
+    sleep(1500)
     let num = 5
-    while (num--) btn_click(text('-').findOne(1000))
-    btn_click(text('确定兑换').findOne(1000)); sleep(200)
+    let btn_x = textStartsWith('消耗').findOne(1000)
+    while (num-- && btn_x) //{btn_click(text('-').findOne(1000))
+        click(btn_x.bounds().centerX() - btn_x.bounds().width(), btn_x.bounds().centerY())
+    btn_click(text('淘金币兑换').findOne(1000)); sleep(200)
     btn_click(text('确认兑换').findOne(1000)); sleep(200)
     btn_click(text('我知道了').findOne(1000)); sleep(1000)
     back(); sleep(800); back(); sleep(800); back(); sleep(800); cs_click(4, '#ff7d44', 0.1, 0.2, 0.5, 0.5, true)
@@ -473,33 +472,37 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
 
 //进入到淘金币列表界面
 function get_into_taojinbi_task_list() {
-    let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
-    if (!text(task_list_ui_reg).findOne(2000)) {
-        let num = 8
-        while (num-- && !desc('领淘金币').findOne(1000)) back();
-        let btn_x = desc('领淘金币').findOne(500)
-        if (!btn_x) {
-            toast_console('请手动回到我的淘宝主界面后重新运行'); exit()
-        }
-        btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
-        for (let i = 0; i < 6; i++) {
-            btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
-            btn_x = text('赚金币').findOne(1000)
-            if (btn_x) break
-        }
-        if (!btn_x) {
-            toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
-        }
-        btn_x.click()
-    }
-    toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
+    // let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
+    // if (!text(task_list_ui_reg).findOne(2000)) {
+    //     let num = 8
+    //     while (num-- && !desc('领淘金币').findOne(1000)) back();
+    //     let btn_x = desc('领淘金币').findOne(500)
+    //     if (!btn_x) {
+    //         toast_console('请手动回到我的淘宝主界面后重新运行'); exit()
+    //     }
+    //     btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
+    //     for (let i = 0; i < 6; i++) {
+    //         btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
+    //         btn_x = text('赚金币').findOne(1000)
+    //         if (btn_x) break
+    //     }
+    //     if (!btn_x) {
+    //         toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
+    //     }
+    //     btn_x.click()
+    // }
+    // toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
+    app.startActivity({
+        packageName: "com.taobao.taobao",
+        data: 'taobao://pages.tmall.com/wow/z/tmtjb/town/task'
+    });
 }
 
 //红包签到
 function do_envelope_signin() {
-    let btn = desc('红包签到').findOne(1000)
+    let btn = text('红包签到').findOne(1000)
     if (btn) {
-        btn.click(); sleep(3000); back()
+        btn_position_click(btn); sleep(3000); back()
     }
 }
 
