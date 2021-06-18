@@ -100,6 +100,7 @@ function wait(sec, title) {
 //根据正则表达式获取任务
 function get_task(key_reg_str, skip_reg) {
     sleep(500); textMatches('每日来访领能量.+|累计任务奖励|x500').findOne(2000);
+	sleep(5000);
     let list_x = textMatches(input_value(ui.txt_btn_reg_str)).find()
     let reg = new RegExp(key_reg_str)
     for (let i = 0; i < list_x.length; i++) {
