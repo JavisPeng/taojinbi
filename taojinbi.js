@@ -1,5 +1,5 @@
 "ui";
-auto() //开启无障碍服务 v1.7.2
+auto() //开启无障碍服务 v1.7.3
 
 if (floaty && floaty.hasOwnProperty("checkPermission") && !floaty.checkPermission()) {
     floaty.requestPermission(); toast("请先开启悬浮窗权限再运行,否则无法显示提示"); exit()
@@ -99,11 +99,12 @@ function wait(sec, title) {
 
 //根据正则表达式获取任务
 function get_task(key_reg_str, skip_reg) {
-    sleep(500); textMatches('每日来访领能量.+|累计任务奖励|x500').findOne(2000);
+    sleep(500); textMatches('每日来访领能量.+|累计任务奖励|x500').findOne(3000);
     let list_x = textMatches(input_value(ui.txt_btn_reg_str)).find()
     let reg = new RegExp(key_reg_str)
     for (let i = 0; i < list_x.length; i++) {
         let btn_topic = list_x[i].parent().child(0).child(0) //主题
+        if (!btn_topic) continue
         let btn_desc = list_x[i].parent().child(0).child(1).child(0) //描述
         if (!btn_desc) continue
         let txt_desc = btn_desc.text()
@@ -471,58 +472,34 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
 
 
 //进入到淘金币列表界面
-function get_into_taojinbi_task_list() {
-    // let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
-    // if (!text(task_list_ui_reg).findOne(2000)) {
-    //     let num = 8
-    //     while (num-- && !desc('领淘金币').findOne(1000)) back();
-    //     let btn_x = desc('领淘金币').findOne(500)
-    //     if (!btn_x) {
-    //         toast_console('请手动回到我的淘宝主界面后重新运行'); exit()
-    //     }
-    //     btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
-    //     for (let i = 0; i < 6; i++) {
-    //         btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
-    //         btn_x = text('赚金币').findOne(1000)
-    //         if (btn_x) break
-    //     }
-    //     if (!btn_x) {
-    //         toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
-    //     }
-    //     btn_x.click()
-    // }
-    // toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
+function enter_taojinbi_task_list() {
     app.startActivity({
         packageName: "com.taobao.taobao",
         data: 'taobao://pages.tmall.com/wow/z/tmtjb/town/task'
     });
+    toast_console('进入到淘金币列表界面..');
 }
 
 //红包签到
 function do_envelope_signin() {
+    btn_click(desc('我的淘宝').findOne(2000)); sleep(1000)
     let btn = text('红包签到').findOne(1000)
     if (btn) {
         btn_position_click(btn); sleep(3000); back()
     }
 }
 
-//启动淘宝并进入到我的界面
-function enter_mine() {
-    toast_console('启动淘宝app')
-    app.launch('com.taobao.taobao'); sleep(1500)
-    btn_click(desc('我的淘宝').findOne(2000)); sleep(1000)
-}
 
 function taojinbi_task() {
     let simple_task_reg_str = input_value(ui.txt_simple_task_reg_str)
     let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
     for (let i = 0; i < MAX_ALL_TASK_EPOCH; i++) {
         toast_console("#第" + (i + 1) + "次执行全任务")
-        enter_mine()
+        app.launch('com.taobao.taobao'); sleep(1500) //启动淘宝
         if (ui.ck_envelope_task.checked) {
             do_envelope_signin()
         }
-        get_into_taojinbi_task_list()
+        enter_taojinbi_task_list()
         if (ui.ck_simple_task.checked) {
             do_simple_task(MAX_EPOCH, wait_sec, simple_task_reg_str, task_list_ui_reg, true)
         }
@@ -790,7 +767,6 @@ ui.layout(
                             <button id="btn_run_main" text="执行选中任务" />
                             <button id="btn_toogle" text="任务选择开关" />
                             <button id="btn_save_opt" text="保存当前配置" />
-                            <button id="btn_load_opt" text="加载本地配置" />
                             <button id="btn_antforest" text="单独执行蚂蚁森林找能量" />
                             <button id="btn_cancel_pat_shop" text="单独执行取消关注的店铺" />
                             <button id="btn_exit" text="退出" />
@@ -812,7 +788,7 @@ ui.layout(
                     <scroll>
                         <vertical>
                             <text text="关键字可设置多个,请以'|'分隔开,特殊任务请确保关键字唯一" textSize="16sp" textColor="blue" />
-                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除|去看看" /></horizontal>
+                            <horizontal><text text="任务执行按钮关键字:" /> <input id="txt_btn_reg_str" text="去完成|去施肥|去领取|去浏览|去逛逛|去消除" /></horizontal>
                             <horizontal><text text="任务列表界面关键字:" /> <input id="txt_task_list_ui_reg" text="做任务赚金币" /></horizontal>
                             <horizontal><text text="简单浏览任务关键字:" /> <input id="txt_simple_task_reg_str" text="^浏|^逛|步数|狂欢活动" /></horizontal>
                             <horizontal><text text="简单任务跳过关键字:" /> <input id="txt_simple_skip_reg_str" text="逛农场|逛好店|天猫APP|消消乐|逛街|六一" /></horizontal>
@@ -860,10 +836,11 @@ ui.tabs.setupWithViewPager(ui.viewpager);
 ui.btn_toogle.click(task_toggle)
 ui.btn_save_opt.click(save_opt)
 ui.btn_antforest.click(zfb_antforest)
-ui.btn_load_opt.click(load_opt)
 ui.btn_cancel_pat_shop.click(cancel_pat_shop)
 ui.btn_exit.click(function () { ui.finish() })
 ui.btn_babafarm.click(solo_baba_farm)
+
+load_opt() //加载保存配置
 
 //运行选择项
 ui.btn_run_main.click(function () {
