@@ -473,11 +473,30 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
 
 //进入到淘金币列表界面
 function enter_taojinbi_task_list() {
-    app.startActivity({
-        packageName: "com.taobao.taobao",
-        data: 'taobao://pages.tmall.com/wow/z/tmtjb/town/task'
-    });
-    toast_console('进入到淘金币列表界面..');
+    let task_list_ui_reg = input_value(ui.txt_task_list_ui_reg)
+    if (!text(task_list_ui_reg).findOne(2000)) {
+        let num = 8
+        while (num-- && !desc('领淘金币').findOne(1000)) back();
+        let btn_x = desc('领淘金币').findOne(500)
+        if (!btn_x) {
+            toast_console('请手动回到我的淘宝主界面后重新运行'); exit()
+        }
+        btn_x.click(); toast_console('进入到淘金币主界面..'); sleep(2000)
+        for (let i = 0; i < 6; i++) {
+            btn_click(text('签到领金币').findOne(1000)); btn_click(text('领取奖励').findOne(1000))
+            btn_x = text('赚金币').findOne(1000)
+            if (btn_x) break
+        }
+        if (!btn_x) {
+            toast_console('无法找到[赚金币]按钮,请重新运行程序'); exit()
+        }
+        btn_x.click()
+    }
+    toast_console('进入到淘金币列表界面..'); textMatches('每日来访领能量.+').findOne(6000);
+    // app.startActivity({
+    //     packageName: "com.taobao.taobao",
+    //     data: 'taobao://pages.tmall.com/wow/z/tmtjb/town/task'
+    // });
 }
 
 //红包签到
@@ -488,7 +507,6 @@ function do_envelope_signin() {
         btn_position_click(btn); sleep(3000); back()
     }
 }
-
 
 function taojinbi_task() {
     let simple_task_reg_str = input_value(ui.txt_simple_task_reg_str)
