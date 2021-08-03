@@ -173,7 +173,7 @@ function do_baba_farm(all_task) {
         console.log('打开签到列表领肥料'); sleep(1000)
         btn_click(text('去签到').findOne(1000)); btn_click(text('去领取').findOne(1000)); sleep(2000)
         if (all_task) {
-            do_simple_task(16, 16, '浏览', 'x500', false)
+            do_simple_task(16, 18, '浏览', 'x500', false)
             if (ui.ck_baba_suit_task.checked) {
                 suit_task()
             }
@@ -455,6 +455,8 @@ function do_simple_task(epoch, sec, reg_str, back_reg, reward) {
             console.log('继续执行简单浏览任务'); continue
         }
         obj.x.click();
+        sleep(2000)
+        swipe(500,2000, 500, 100, 1000);
         wait(sec, obj.txt)
         let num = 8
         while (num-- && !text(back_reg).findOne(1000)) {
